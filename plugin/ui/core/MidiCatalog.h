@@ -45,6 +45,10 @@ struct BlockPowerTarget {
 };
 std::optional<BlockPowerTarget> blockPowerTarget(const juce::String& targetId);
 
+// Bind a switch to one block through reorder and lane moves.
+juce::String blockIdPowerTarget(const std::string& blockId);
+std::optional<std::string> blockIdFromPowerTarget(const juce::String& targetId);
+
 // 60 → "C4" (scientific pitch, middle C = C4).
 juce::String noteName(int note);
 // "CC 64" / "Note C2": the mapping row's source column.

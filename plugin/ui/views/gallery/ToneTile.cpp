@@ -4,6 +4,7 @@
 #include "core/Design.h"
 #include "core/Help.h"
 #include "core/Icons.h"
+#include "core/MidiCatalog.h"
 #include "core/Paint.h"
 #include "core/Theme.h"
 
@@ -93,10 +94,16 @@ void ToneTile::open() {
 }
 
 std::vector<ContextMenu::Item> ToneTile::menuItems() {
+  const auto target = midi::blockIdPowerTarget(blockId());
   std::vector<ContextMenu::Item> items{
       {"Copy", Icon::Copy, help::Key::copyBlock,
        [this] { this->services().chain.copyBlock(blockId()); }},
+      {"Learn MIDI Power", Icon::Power, help::Key::blockPower,
+       [this, target] { this->services().midiMap.startLearn(target); }},
   };
+  if (const auto& map = services().midiMap.state(); map && map->mappingFor(target))
+    items.push_back({"Remove MIDI Power", Icon::X, help::Key::blockPower,
+                     [this, target] { this->services().midiMap.removeMapping(target); }});
   for (auto& item : localLoadItems()) items.push_back(std::move(item));
   return items;
 }

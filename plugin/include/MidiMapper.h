@@ -4,6 +4,8 @@
 
 #include <atomic>
 #include <functional>
+#include <memory>
+#include <string>
 #include <vector>
 
 /**
@@ -16,13 +18,15 @@
  * in hosts (the DAW hands us the buffer). The map serializes with plugin
  * state (getStateInformation), so it travels with DAW sessions.
  *
- * Targets come in four kinds:
+ * Targets include:
  *   - APVTS parameters ("gateThreshold").
  *   - Positional block powers ("block1Power" = the first tone block in the
  *     Left lane, "rightBlock1Power" = the first in the Right lane; stereo
  *     only). Positional addressing is deliberate: block ids are ephemeral
  *     (tone swaps, preset loads), but "my second stomp bypasses block 2" is
  *     a pedalboard fact that should survive all of that.
+ *   - Block identity powers ("blockId:<uuid>:power"): follow one block
+ *     through reorder and lane moves; become dormant if it is removed.
  *   - Stereo mode ("stereoEnabled"): chain state, not a parameter, so it
  *     gets the same virtual-target treatment as block powers.
  *   - Preset steps ("presetPrevious" / "presetNext"): fire-per-press
@@ -101,6 +105,8 @@ public:
   /** A mapped block-power control fired for the given chain position
       (rightLane = the Right lane's Nth tone block, stereo mode only). */
   std::function<void(int blockIndex, bool rightLane)> onBlockPowerToggle;
+  /** A mapped block-id power fired; follows the block across reorder/moves. */
+  std::function<void(const std::string& blockId)> onBlockIdPowerToggle;
   /** A mapped stereo-mode control fired (net of parity coalescing). */
   std::function<void()> onStereoToggle;
   /** Mapped preset prev/next controls fired; delta is the net step count
@@ -109,7 +115,8 @@ public:
 
 private:
   enum class Source : int { cc = 0, note = 1 };
-  enum class Kind : int { parameter = 0, blockPower = 1, stereoMode = 2, presetStep = 3 };
+  enum class Kind : int { parameter = 0, blockPower = 1, stereoMode = 2, presetStep = 3,
+                         blockIdPower = 4 };
 
   /** Virtual target id for the chain's stereo on/off (chain state, not an
       APVTS parameter; the UI catalog uses the same id). */
@@ -125,6 +132,10 @@ private:
     juce::RangedAudioParameter* param = nullptr;  // Kind::parameter only
     int blockIndex = -1;                          // Kind::blockPower only
     bool rightBlock = false;                      // Kind::blockPower only: Right lane
+    std::string blockId;                          // Kind::blockIdPower only
+    // Allocated on the message thread; the audio thread only flips this
+    // atomic. Its lifetime follows the mapping under mapLock.
+    std::shared_ptr<std::atomic<unsigned int>> pendingIdPower;
     int presetDelta = 0;                          // Kind::presetStep only: +1 / -1
     Source source = Source::cc;
     int number = 0;       // CC number or note number
@@ -148,9 +159,11 @@ private:
   /** "block3Power" → {2, left}, "rightBlock3Power" → {2, right}; index -1
       for anything else. Bounded by the width of the pending-toggle bitmask. */
   static BlockPowerTarget blockPowerTargetFor(const juce::String& targetId);
+  static std::string blockIdPowerTargetFor(const juce::String& targetId);
 
   bool isValidTarget(const juce::String& targetId) const {
-    return blockPowerTargetFor(targetId).index >= 0 || targetId == kStereoTarget ||
+    return blockPowerTargetFor(targetId).index >= 0 ||
+           !blockIdPowerTargetFor(targetId).empty() || targetId == kStereoTarget ||
            targetId == kPresetPrevTarget || targetId == kPresetNextTarget ||
            parameters.getParameter(targetId) != nullptr;
   }

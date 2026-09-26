@@ -87,6 +87,9 @@ TONE3000Processor::TONE3000Processor()
   midiMapper.onBlockPowerToggle = [this](int index, bool right) {
     toggleBlockPower(index, right);
   };
+  midiMapper.onBlockIdPowerToggle = [this](const std::string& id) {
+    toggleBlockPowerById(id);
+  };
   midiMapper.onStereoToggle = [this] { setStereoMode(!isStereoMode()); };
 
   // Every lane starts at its minimum slot layout (kMinLaneSlots pass-through

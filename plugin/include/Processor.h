@@ -759,6 +759,7 @@ private:
   // loads. No-op when the lane is shorter than N, and for the Right lane
   // outside stereo mode, so an inert lane is never edited invisibly.
   bool toggleBlockPower(int position, bool rightLane);
+  bool toggleBlockPowerById(const std::string& blockId);
 
   // Preset internals (ProcessorPresets.cpp).
   // The faceplate parameters a preset carries. Explicitly scoped: rig

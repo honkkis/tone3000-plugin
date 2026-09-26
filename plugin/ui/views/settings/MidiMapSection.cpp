@@ -21,7 +21,8 @@ const juce::String kEmptyCopy =
     "No mappings yet. Choose a control, then move it on your MIDI device or type its CC number.";
 const juce::String kPresetsCaption =
     "Map Previous / Next Preset to step through presets from CC or note buttons. Program change messages also "
-    "switch presets directly; each preset shows its PC number in the preset browser.";
+    "switch presets directly; each preset shows its PC number in the preset browser. Block Power follows "
+    "one block when you move it; Slot Power controls that position across presets.";
 
 int lineHeight(float px) { return Fonts::normalLineHeight(px); }
 int monoLineHeight(float px) { return Fonts::normalLineHeight(Fonts::mono(px)); }
@@ -34,7 +35,7 @@ class MidiMapSection::Row : public juce::Component {
 public:
   Row(juce::String targetId, juce::String context) : targetId_(std::move(targetId)), context_(std::move(context)) {
     if (const auto* target = midi::targetById(targetId_)) title_ = target->name;
-    else title_ = targetId_;
+    else title_ = midi::blockIdFromPowerTarget(targetId_) ? "Block Power" : targetId_;
   }
 
   const juce::String& targetId() const { return targetId_; }
@@ -302,6 +303,16 @@ MidiMapSection::~MidiMapSection() {
 }
 
 juce::String MidiMapSection::targetContext(const juce::String& targetId) const {
+  if (const auto id = midi::blockIdFromPowerTarget(targetId)) {
+    const auto& state = services_.chain.state();
+    const auto sep = juce::String::fromUTF8(" \xc2\xb7 ");
+    for (const auto& item : state.chain)
+      if (item.blockId == *id) return (state.chainRight ? "Chain L" : "Chain") + sep + item.tone.title;
+    if (state.chainRight)
+      for (const auto& item : *state.chainRight)
+        if (item.blockId == *id) return "Chain R" + sep + item.tone.title;
+    return "Block removed";
+  }
   const auto block = midi::blockPowerTarget(targetId);
   if (!block) {
     const auto* target = midi::targetById(targetId);
@@ -378,6 +389,18 @@ void MidiMapSection::rebuild() {
       continue;
     options.push_back({target.id, target.name, targetContext(target.id)});
   }
+  // Explicit block targets follow the block's ID; the older slot targets
+  // above remain for pedalboards that deliberately address a position.
+  auto addBlockTargets = [&](const std::vector<ChainItem>& items, const juce::String& side) {
+    for (const auto& item : items) {
+      if (!item.isTone()) continue;
+      const auto id = midi::blockIdPowerTarget(item.blockId);
+      if (state->mappingFor(id) == nullptr)
+        options.push_back({id, item.tone.title + " Power", side + " / this block"});
+    }
+  };
+  addBlockTargets(chain.chain, chain.chainRight ? "Chain L" : "Chain");
+  if (chain.chainRight) addBlockTargets(*chain.chainRight, "Chain R");
   const bool anyOptions = !options.empty();
   picker_.setOptions(std::move(options));
   picker_.setValue(std::nullopt);

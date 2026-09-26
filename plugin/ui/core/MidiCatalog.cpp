@@ -45,9 +45,9 @@ const std::vector<MappableTarget>& mappableTargets() {
         {"chainInvertRight", "Invert R", "Stereo", K::toggle},
     };
     for (int i = 1; i <= kBlockPowerTargets; ++i)
-      t.push_back({"block" + juce::String(i) + "Power", "Block " + juce::String(i) + " Power", "Chain", K::toggle});
+      t.push_back({"block" + juce::String(i) + "Power", "Slot " + juce::String(i) + " Power", "Chain", K::toggle});
     for (int i = 1; i <= kBlockPowerTargets; ++i)
-      t.push_back({"rightBlock" + juce::String(i) + "Power", "Block " + juce::String(i) + " Power", "Chain R",
+      t.push_back({"rightBlock" + juce::String(i) + "Power", "Slot " + juce::String(i) + " Power", "Chain R",
                    K::toggle});
     return t;
   }();
@@ -70,6 +70,18 @@ std::optional<BlockPowerTarget> blockPowerTarget(const juce::String& targetId) {
   return BlockPowerTarget{digits.getIntValue() - 1, right};
 }
 
+juce::String blockIdPowerTarget(const std::string& blockId) {
+  return "blockId:" + juce::String(blockId) + ":power";
+}
+
+std::optional<std::string> blockIdFromPowerTarget(const juce::String& targetId) {
+  if (!targetId.startsWith("blockId:") || !targetId.endsWith(":power")) return std::nullopt;
+  const auto id = targetId.substring(8, targetId.length() - 6);
+  if ((id.length() != 32 && id.length() != 36) ||
+      !id.containsOnly("0123456789abcdefABCDEF-")) return std::nullopt;
+  return id.toStdString();
+}
+
 juce::String noteName(int note) {
   static const char* const kNames[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
   return juce::String(kNames[((note % 12) + 12) % 12]) + juce::String(note / 12 - 1);
@@ -81,6 +93,7 @@ juce::String sourceLabel(const MidiMapping& mapping) {
 }
 
 juce::String behaviorLabel(const MidiMapping& mapping) {
+  if (blockIdFromPowerTarget(mapping.targetId)) return "Toggle";
   const auto* target = targetById(mapping.targetId);
   const auto kind = target != nullptr ? std::optional(target->kind) : std::nullopt;
   if (kind == TargetKind::trigger) return "Trigger";

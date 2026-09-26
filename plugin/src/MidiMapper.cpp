@@ -20,6 +20,17 @@ MidiMapper::BlockPowerTarget MidiMapper::blockPowerTargetFor(const juce::String&
   return {position - 1, right};
 }
 
+std::string MidiMapper::blockIdPowerTargetFor(const juce::String& targetId) {
+  if (!targetId.startsWith("blockId:") || !targetId.endsWith(":power"))
+    return {};
+  const auto id = targetId.substring(8, targetId.length() - 6);
+  // JUCE writes 32 hex digits; accept its dashed representation too.
+  if ((id.length() != 32 && id.length() != 36) ||
+      !id.containsOnly("0123456789abcdefABCDEF-"))
+    return {};
+  return id.toStdString();
+}
+
 //==============================================================================
 // Audio thread
 
@@ -97,6 +108,10 @@ void MidiMapper::applyEvent(Mapping& mapping, const juce::MidiMessage& msg) {
         // before the async update runs.
         (mapping.rightBlock ? pendingRightBlockToggles : pendingBlockToggles)
             .fetch_xor(juce::uint64(1) << mapping.blockIndex);
+        triggerAsyncUpdate();
+        return;
+      case Kind::blockIdPower:
+        mapping.pendingIdPower->fetch_xor(1u, std::memory_order_relaxed);
         triggerAsyncUpdate();
         return;
       case Kind::stereoMode:
@@ -207,18 +222,33 @@ bool MidiMapper::setCcMapping(const juce::String& targetId, int ccNumber) {
 MidiMapper::Mapping MidiMapper::makeMapping(const juce::String& targetId, Source source,
                                             int number) const {
   const auto block = blockPowerTargetFor(targetId);
+  const auto blockId = blockIdPowerTargetFor(targetId);
   const int presetDelta = targetId == kPresetNextTarget   ? 1
                           : targetId == kPresetPrevTarget ? -1
                                                           : 0;
   const Kind kind = presetDelta != 0          ? Kind::presetStep
                     : targetId == kStereoTarget ? Kind::stereoMode
                     : block.index >= 0          ? Kind::blockPower
+                    : !blockId.empty()          ? Kind::blockIdPower
                                                 : Kind::parameter;
   auto* param = kind == Kind::parameter ? parameters.getParameter(targetId) : nullptr;
   jassert(kind != Kind::parameter || param != nullptr);  // callers validate the id first
   const bool toggle = kind != Kind::parameter || source == Source::note ||
                       (param != nullptr && param->isBoolean());
-  return {targetId, kind, param, block.index, block.right, presetDelta, source, number, toggle};
+  Mapping mapping;
+  mapping.targetId = targetId;
+  mapping.kind = kind;
+  mapping.param = param;
+  mapping.blockIndex = block.index;
+  mapping.rightBlock = block.right;
+  mapping.blockId = blockId;
+  if (kind == Kind::blockIdPower)
+    mapping.pendingIdPower = std::make_shared<std::atomic<unsigned int>>(0u);
+  mapping.presetDelta = presetDelta;
+  mapping.source = source;
+  mapping.number = number;
+  mapping.toggle = toggle;
+  return mapping;
 }
 
 void MidiMapper::notifyChanged() {
@@ -255,6 +285,19 @@ void MidiMapper::handleAsyncUpdate() {
   for (int index = 0; rightToggles != 0; ++index, rightToggles >>= 1)
     if ((rightToggles & 1) != 0 && onBlockPowerToggle)
       onBlockPowerToggle(index, true);
+
+  // Drain by stable block identity; copies of the strings happen here, on
+  // the message thread. Do not call back into the processor under mapLock.
+  std::vector<std::string> blockIds;
+  {
+    const juce::SpinLock::ScopedLockType lock(mapLock);
+    for (const auto& mapping : mappings)
+      if (mapping.pendingIdPower &&
+          (mapping.pendingIdPower->exchange(0, std::memory_order_relaxed) & 1u))
+        blockIds.push_back(mapping.blockId);
+  }
+  if (onBlockIdPowerToggle)
+    for (const auto& id : blockIds) onBlockIdPowerToggle(id);
 
   if (pendingStereoToggles.exchange(0) % 2 != 0 && onStereoToggle)
     onStereoToggle();

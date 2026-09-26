@@ -1575,6 +1575,21 @@ bool TONE3000Processor::toggleBlockPower(int position, bool rightLane) {
   return setBlockParam(blockId, "enabled", enabled ? 0.0 : 1.0);
 }
 
+bool TONE3000Processor::toggleBlockPowerById(const std::string& blockId) {
+  bool enabled = false;
+  {
+    juce::ScopedLock lock(chainMutex);
+    const auto* block = findBlockById(blockId);
+    if (block == nullptr || block->type == ChainBlockType::INSERT)
+      return false;  // removed or replaced: the mapping is dormant
+    if (!stereoEnabled.load())
+      for (const auto& b : lane(ChainSide::Right))
+        if (b->id == blockId) return false;
+    enabled = block->enabled;
+  }
+  return setBlockParam(blockId, "enabled", enabled ? 0.0 : 1.0);
+}
+
 // ####################
 // PER-BLOCK EQ
 // ####################

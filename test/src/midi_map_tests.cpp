@@ -20,6 +20,7 @@
 // AsyncUpdater, so these tests pump the dispatch loop (the test target
 // builds with JUCE_MODAL_LOOPS_PERMITTED=1 for runDispatchLoopUntil).
 #include "Processor.h"
+#include "chain_test_helpers.h"
 
 #include <gtest/gtest.h>
 #include <juce_events/juce_events.h>
@@ -182,6 +183,46 @@ TEST(MidiMapperTest, BlockPowerTargetsRouteToTheirLane) {
   ASSERT_EQ(toggles.size(), 2u);
   EXPECT_EQ(toggles[0], std::make_pair(0, false));
   EXPECT_EQ(toggles[1], std::make_pair(1, true));
+}
+
+TEST(MidiMapperTest, BlockIdentityMappingFollowsLaneMoveAndSurvivesStateRestore) {
+  constexpr auto kFirst = "11111111111111111111111111111111";
+  constexpr auto kOther = "22222222222222222222222222222222";
+  ChainTestProcessor proc;
+  proc.setPlayConfigDetails(2, 2, 48000, 512);
+  proc.prepareToPlay(48000, 512);
+  seedStereoChains(proc, {kFirst, kOther}, {});
+  ASSERT_TRUE(waitForChainLoaded(proc));
+  const juce::String target = juce::String("blockId:") + kFirst + ":power";
+  ASSERT_TRUE(proc.midiMapper.setCcMapping(target, 42));
+  EXPECT_FALSE(proc.midiMapper.setCcMapping("blockId:missing:power", 42));
+
+  ASSERT_TRUE(proc.moveBlockToChain(kFirst, "right", 0));
+  proc.midiMapper.processMidi(ccEvent(42, 127));
+  pumpMessages();
+  auto state = proc.getChainState(-1);
+  bool foundFirst = false, foundOther = false;
+  for (const auto& item : *state["chainRight"].getArray())
+    if (item["blockId"].toString() == kFirst) {
+      foundFirst = true;
+      EXPECT_FALSE(static_cast<bool>(item["params"]["enabled"]));
+    }
+  for (const auto& item : *state["chain"].getArray())
+    if (item["blockId"].toString() == kOther) {
+      foundOther = true;
+      EXPECT_TRUE(static_cast<bool>(item["params"]["enabled"]));
+    }
+  EXPECT_TRUE(foundFirst);
+  EXPECT_TRUE(foundOther);
+
+  const auto savedMap = proc.midiMapper.toValueTree();
+  proc.midiMapper.restoreFromValueTree(savedMap);
+  proc.midiMapper.processMidi(ccEvent(42, 127));
+  pumpMessages();
+  state = proc.getChainState(-1);
+  for (const auto& item : *state["chainRight"].getArray())
+    if (item["blockId"].toString() == kFirst)
+      EXPECT_TRUE(static_cast<bool>(item["params"]["enabled"]));
 }
 
 TEST(MidiMapperTest, PresetStepTargetsDeliverCoalescedDeltas) {
