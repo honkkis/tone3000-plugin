@@ -13,6 +13,7 @@
 #include <string>
 
 #include "BlockCard.h"
+#include "ReverbCard.h"
 #include "widgets/BackLink.h"
 #include "widgets/DragScroller.h"
 #include "services/ChainStore.h"
@@ -50,6 +51,7 @@ private:
   juce::Component column_;
   std::unique_ptr<BackLink> back_;
   std::unique_ptr<BlockCard> card_;
+  std::unique_ptr<ReverbCard> reverb_;
   bool infoOpen_ = false;
 };
 

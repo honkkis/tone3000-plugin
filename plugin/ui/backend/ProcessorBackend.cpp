@@ -49,6 +49,9 @@ std::string ProcessorBackend::loadTone(const juce::String& toneJson,
                                        const std::string& targetInsertId) {
   return processor_.loadTone(toneJson, targetInsertId);
 }
+std::string ProcessorBackend::addReverbBlock(const std::string& targetInsertId) {
+  return processor_.addReverbBlock(targetInsertId);
+}
 juce::var ProcessorBackend::loadLocalTonePath(const juce::File& source,
                                               const std::string& targetInsertId) {
   return processor_.loadLocalTonePath(source, targetInsertId);

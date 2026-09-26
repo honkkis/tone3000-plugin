@@ -128,8 +128,10 @@ juce::ValueTree TONE3000Processor::serializeBlockSettings(const ChainBlock& bloc
   blockState.setProperty("inputGain", block.inputGainNormalized, nullptr);
   blockState.setProperty("outputGain", block.outputGainNormalized, nullptr);
   blockState.setProperty("mix", block.mixNormalized, nullptr);
+  if (block.type == ChainBlockType::REVERB)
+    blockState.setProperty("roomSize", block.reverbRoomSize, nullptr);
 
-  if (block.type != ChainBlockType::INSERT) {
+  if (block.type == ChainBlockType::NAM || block.type == ChainBlockType::IR) {
     blockState.setProperty("toneId", block.toneId, nullptr);
     blockState.setProperty("toneJson", block.toneJson, nullptr);
     blockState.setProperty("activeModelId", block.activeModelId, nullptr);
@@ -145,6 +147,8 @@ void TONE3000Processor::applyBlockSettings(ChainBlock& block, const juce::ValueT
   block.inputGainNormalized = static_cast<float>(blockState.getProperty("inputGain", 0.5f));
   block.outputGainNormalized = static_cast<float>(blockState.getProperty("outputGain", 0.5f));
   block.mixNormalized = static_cast<float>(blockState.getProperty("mix", 1.0f));
+  block.reverbRoomSize = juce::jlimit(0.0f, 1.0f,
+      static_cast<float>(blockState.getProperty("roomSize", 0.5f)));
 
   // States from before per-block sizes restore as lite (0.0). An engine the
   // restore keeps loaded (see reconcileChainFromTree) retiers in place: the
@@ -169,7 +173,7 @@ void TONE3000Processor::serializeChainToTree(
   for (const auto& block : blocks) {
     juce::ValueTree blockState = serializeBlockSettings(*block);
 
-    if (includeModelData && block->type != ChainBlockType::INSERT) {
+    if (includeModelData && (block->type == ChainBlockType::NAM || block->type == ChainBlockType::IR)) {
       juce::ValueTree cacheState("ModelCache");
       for (const auto& [modelId, modelData] : block->modelCache) {
         // Only models the block's tone still references are persisted: the

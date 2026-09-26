@@ -31,6 +31,7 @@ target_sources(DspTests PRIVATE
     src/outgain_tests.cpp
     src/preset_tests.cpp
     src/processor_tests.cpp
+    src/reverb_block_tests.cpp
     src/spread_tests.cpp
     src/state_cache_tests.cpp
     src/swap_fade_tests.cpp

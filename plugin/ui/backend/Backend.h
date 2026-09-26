@@ -43,6 +43,7 @@ public:
   // Chain mutations
   // Returns the new block id, "" on failure.
   virtual std::string loadTone(const juce::String& toneJson, const std::string& targetInsertId) = 0;
+  virtual std::string addReverbBlock(const std::string& targetInsertId) { return {}; }
   // { blockId } or a user-facing { error }.
   virtual juce::var loadLocalTonePath(const juce::File& source, const std::string& targetInsertId) = 0;
   virtual juce::var loadLocalToneUrls(const juce::Array<juce::URL>& sources,

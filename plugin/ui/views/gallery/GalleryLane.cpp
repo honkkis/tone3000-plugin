@@ -64,8 +64,9 @@ void GalleryLane::setItems(const std::vector<ChainItem>& items, int tileSize) {
     const auto& item = items_[i];
     auto existing = tiles_.find(item.blockId);
     std::unique_ptr<GalleryTile> tile;
-    if (existing != tiles_.end()) {
-      const bool sameKind = item.isInsert ? dynamic_cast<AddTile*>(existing->second.get()) != nullptr
+      if (existing != tiles_.end()) {
+        const bool sameKind = item.isInsert ? dynamic_cast<AddTile*>(existing->second.get()) != nullptr
+                                          : item.isReverb ? dynamic_cast<ReverbTile*>(existing->second.get()) != nullptr
                                           : dynamic_cast<ToneTile*>(existing->second.get()) != nullptr;
       if (sameKind && existing->second->tileSize() == tile_) tile = std::move(existing->second);
       tiles_.erase(existing);
@@ -78,6 +79,10 @@ void GalleryLane::setItems(const std::vector<ChainItem>& items, int tileSize) {
           if (onPaste) onPaste(indexOf(id));
         };
         tile = std::move(add);
+      } else if (item.isReverb) {
+        auto reverb = std::make_unique<ReverbTile>(services_, item, tile_);
+        reverb->onOpen = [this](const std::string& id) { if (onOpen) onOpen(id); };
+        tile = std::move(reverb);
       } else {
         auto tone = std::make_unique<ToneTile>(services_, item, tile_);
         tone->onOpen = [this](const std::string& id) { if (onOpen) onOpen(id); };
@@ -91,6 +96,8 @@ void GalleryLane::setItems(const std::vector<ChainItem>& items, int tileSize) {
       add->setCanPaste(canPaste_);
     } else if (auto* tone = dynamic_cast<ToneTile*>(tile.get())) {
       tone->setBlock(item);
+    } else if (auto* reverb = dynamic_cast<ReverbTile*>(tile.get())) {
+      reverb->setBlock(item);
     }
     tile->setVisible(item.blockId != placeholder_);
     next[item.blockId] = std::move(tile);

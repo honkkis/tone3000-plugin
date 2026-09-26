@@ -16,6 +16,7 @@
 
 #include "AddTile.h"
 #include "ToneTile.h"
+#include "ReverbTile.h"
 #include "model/ChainState.h"
 #include "services/Services.h"
 

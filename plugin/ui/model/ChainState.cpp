@@ -89,6 +89,7 @@ BlockParams parseParams(const juce::var& v) {
   p.inputGain = num(v, "inputGain", 0.5);
   p.outputGain = num(v, "outputGain", 0.5);
   p.mix = num(v, "mix", 1);
+  p.roomSize = num(v, "roomSize", 0.5);
   const auto& eq = v["eq"];
   p.eq.enabled = boolean(eq, "enabled", false);
   p.eq.pre = boolean(eq, "pre", false);
@@ -123,10 +124,12 @@ ToneSummary parseTone(const juce::var& v) {
 ChainItem parseItem(const juce::var& v) {
   ChainItem item;
   item.blockId = str(v, "blockId").toStdString();
-  item.isInsert = str(v, "kind", "insert") != "tone";
+  item.isInsert = str(v, "kind", "insert") == "insert";
+  item.isReverb = str(v, "kind", "insert") == "reverb";
   if (item.isInsert)
     return item;
-  item.tone = parseTone(v["tone"]);
+  if (!item.isReverb)
+    item.tone = parseTone(v["tone"]);
   item.activeModelId = integer(v, "activeModelId");
   item.loaded = boolean(v, "loaded", false);
   item.loadFailed = boolean(v, "loadFailed", false);

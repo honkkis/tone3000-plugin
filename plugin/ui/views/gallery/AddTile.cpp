@@ -35,6 +35,8 @@ void AddTile::open() {
 
 std::vector<ContextMenu::Item> AddTile::menuItems() {
   std::vector<ContextMenu::Item> items{
+      {"Add Reverb", Icon::PlusCircle, help::Key::addTile,
+       [this] { this->services().chain.addReverbBlock(blockId()); }},
       {"Paste", Icon::ClipboardPaste, help::Key::pasteBlock,
        [this] { if (onPaste) onPaste(blockId()); }, /*disabled=*/!canPaste_},
   };

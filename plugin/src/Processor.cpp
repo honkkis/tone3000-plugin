@@ -418,7 +418,8 @@ double TONE3000Processor::getTailLengthSeconds() const {
   //    reference NAM plugin reports the same allowance for VST3 tail checks.
   const double irTailSeconds = irTailBaseSamples.load() / kChainBaseSampleRate;
   const double dcBlockerTailSeconds = 10.0 / 5.0;
-  return std::max(irTailSeconds, dcBlockerTailSeconds);
+  return std::max({irTailSeconds, dcBlockerTailSeconds,
+                   reverbTailPresent.load() ? 10.0 : 0.0});
 }
 
 // The host program API (getNumPrograms and friends) lives in
@@ -461,6 +462,13 @@ void TONE3000Processor::prepareChain(std::vector<std::unique_ptr<ChainBlock>>& b
       }
 
       DBG("IR convolvers re-prepared for block: " << block->id);
+    } else if (block->type == ChainBlockType::REVERB) {
+      for (auto& reverb : block->reverb) {
+        reverb.setSampleRate(chainRate);
+        reverb.reset();
+      }
+      block->reverbPrepared = true;
+      block->appliedReverbRoomSize = -1.0f;
     }
 
     // Every IR block keeps its base-rate island in step with the live factor
@@ -497,11 +505,16 @@ void TONE3000Processor::prepareChain(std::vector<std::unique_ptr<ChainBlock>>& b
 // stereo toggles can never truncate a host's tail rendering mid-session.
 void TONE3000Processor::refreshIrTailLength() {
   int maxSamples = 0;
+  bool hasReverb = false;
   for (const auto& l : lanes)
-    for (const auto& b : l)
+    for (const auto& b : l) {
       if (b->type == ChainBlockType::IR && b->convolverMono != nullptr)
         maxSamples = std::max(maxSamples, b->irLengthBaseSamples);
+      if (b->type == ChainBlockType::REVERB && b->enabled)
+        hasReverb = true;
+    }
   irTailBaseSamples.store(maxSamples);
+  reverbTailPresent.store(hasReverb);
 }
 
 // Constant-power pan gains for a chain at position `pan` (0 = hard left,
@@ -1183,6 +1196,18 @@ void TONE3000Processor::processChainOnBuffer(std::vector<std::unique_ptr<ChainBl
         }
         continue;
       }
+    } else if (block->type == ChainBlockType::REVERB) {
+      juce::Reverb::Parameters params;
+      params.roomSize = block->reverbRoomSize;
+      params.wetLevel = 1.0f;
+      params.dryLevel = 0.0f;
+      params.width = 0.0f;  // Each channel owns an independent mono instance.
+      if (block->appliedReverbRoomSize != block->reverbRoomSize) {
+        for (auto& reverb : block->reverb) reverb.setParameters(params);
+        block->appliedReverbRoomSize = block->reverbRoomSize;
+      }
+      for (int ch = 0; ch < numChannels; ++ch)
+        block->reverb[ch].processMono(buffer.getWritePointer(ch), numSamples);
     } else if (block->type == ChainBlockType::IR && block->convolverMono != nullptr) {
       // IR Processing.
       try {

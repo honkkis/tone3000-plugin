@@ -63,6 +63,16 @@ void BlockDetail::sync() {
     if (onBack) onBack();
     return;
   }
+  if (found.item->isReverb) {
+    if (!reverb_) {
+      reverb_ = std::make_unique<ReverbCard>(services_, *found.item);
+      column_.addAndMakeVisible(*reverb_);
+    } else {
+      reverb_->setBlock(*found.item);
+    }
+    layout();
+    return;
+  }
   if (!card_) {
     card_ = std::make_unique<BlockCard>(services_, *found.item, found.namDownstream);
     card_->onSwap = [this] {
@@ -83,15 +93,17 @@ void BlockDetail::sync() {
 void BlockDetail::resized() { layout(); }
 
 void BlockDetail::layout() {
-  if (!card_) return;
+  if (!card_ && !reverb_) return;
   scroller_->setBounds(getLocalBounds());
   const int x = (getWidth() - BlockCard::kWidth) / 2;
   // Info view: the pads live in the scroll content; otherwise the column is
   // pinned under the shared pad and never scrolls.
   const int top = kPadY;
   back_->setTopLeftPosition(x, top);
-  card_->setTopLeftPosition(x, top + back_->getHeight() + kBackGap);
-  const int contentH = card_->getBottom() + kPadY;
+  juce::Component* content = reverb_ ? static_cast<juce::Component*>(reverb_.get())
+                                       : static_cast<juce::Component*>(card_.get());
+  content->setTopLeftPosition(x, top + back_->getHeight() + kBackGap);
+  const int contentH = content->getBottom() + kPadY;
   column_.setSize(getWidth(), infoOpen_ ? std::max(contentH, getHeight()) : getHeight());
   if (!infoOpen_) scroller_->setViewPosition(0, 0);
 }

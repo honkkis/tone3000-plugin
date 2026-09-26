@@ -135,7 +135,7 @@ void TONE3000Processor::reconcileChainFromTree(const juce::ValueTree& chainState
     std::unique_ptr<ChainBlock> block;
     auto it = existing.find(blockId);
     if (it != existing.end() && it->second->type == type &&
-        (type == ChainBlockType::INSERT || it->second->toneId == toneId)) {
+        (type == ChainBlockType::INSERT || type == ChainBlockType::REVERB || it->second->toneId == toneId)) {
       block = std::move(it->second);
       existing.erase(it);
     } else {
@@ -145,6 +145,19 @@ void TONE3000Processor::reconcileChainFromTree(const juce::ValueTree& chainState
     applyBlockSettings(*block, blockState);
 
     if (type == ChainBlockType::INSERT) {
+      target.push_back(std::move(block));
+      continue;
+    }
+    if (type == ChainBlockType::REVERB) {
+      // A new effect needs its delay buffers at the current chain rate;
+      // reused blocks keep their tails across undo and preset updates.
+      if (!block->reverbPrepared) {
+        Lane fresh;
+        fresh.push_back(std::move(block));
+        prepareChain(fresh);
+        block = std::move(fresh.front());
+        block->loaded = true;
+      }
       target.push_back(std::move(block));
       continue;
     }

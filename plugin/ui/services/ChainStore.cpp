@@ -37,6 +37,9 @@ juce::String ChainStore::localLoadResult(const juce::var& res) {
 std::string ChainStore::loadTone(const juce::String& toneJson, const std::string& targetInsertId) {
   return run([&] { return backend_.loadTone(toneJson, targetInsertId); });
 }
+std::string ChainStore::addReverbBlock(const std::string& targetInsertId) {
+  return run([&] { return backend_.addReverbBlock(targetInsertId); });
+}
 
 juce::String ChainStore::loadLocalTonePath(const juce::File& source, const std::string& targetId) {
   return localLoadResult(run([&] { return backend_.loadLocalTonePath(source, targetId); }));

@@ -12,11 +12,12 @@
 #include "NamEngine.h"
 
 // Chain block types
-enum class ChainBlockType { NAM, IR, INSERT };
+enum class ChainBlockType { NAM, IR, REVERB, INSERT };
 
 inline juce::String chainBlockTypeToString(ChainBlockType type) {
   switch (type) {
     case ChainBlockType::NAM: return "nam";
+    case ChainBlockType::REVERB: return "reverb";
     case ChainBlockType::INSERT: return "insert";
     case ChainBlockType::IR: break;
   }
@@ -25,6 +26,7 @@ inline juce::String chainBlockTypeToString(ChainBlockType type) {
 
 inline ChainBlockType chainBlockTypeFromString(const juce::String& s) {
   if (s == "nam") return ChainBlockType::NAM;
+  if (s == "reverb") return ChainBlockType::REVERB;
   if (s == "insert") return ChainBlockType::INSERT;
   return ChainBlockType::IR;
 }
@@ -215,6 +217,12 @@ struct ChainBlock {
   juce::LinearSmoothedValue<float> outputGainSmoother;
   float mixNormalized{1.0f};  // 0 = dry, 1 = wet
   juce::LinearSmoothedValue<float> mixSmoother;
+  // Independent instances keep the two channels' reverb tails isolated.
+  // The existing block mix stage blends their 100%-wet outputs with dry.
+  juce::Reverb reverb[2];
+  float reverbRoomSize{0.5f};
+  float appliedReverbRoomSize{-1.0f};
+  bool reverbPrepared{false};
 
   // Per-block meter levels (dB, -60 floor). Written by the audio thread every
   // block, read by the UI via getMeterLevels(). Input is measured post
@@ -234,6 +242,7 @@ struct ChainBlock {
   BlockSpectrum spectrum;
 
   ChainBlock(const std::string& blockId, ChainBlockType blockType)
-      : id(blockId), type(blockType), toneId(0), activeModelId(0), loaded(false),
+      : id(blockId), type(blockType), toneId(0), activeModelId(0),
+        loaded(blockType == ChainBlockType::REVERB),
         enabled(true) {}
 };

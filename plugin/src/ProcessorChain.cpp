@@ -329,6 +329,31 @@ std::string TONE3000Processor::loadTone(const juce::String& toneJsonString,
   return blockId;
 }
 
+std::string TONE3000Processor::addReverbBlock(const std::string& targetInsertId) {
+  ChainEditFade editFade(*this);
+  juce::ScopedLock lock(chainMutex);
+  Lane* target = nullptr;
+  Lane::iterator slot;
+  for (auto& lane : lanes) {
+    auto it = std::find_if(lane.begin(), lane.end(), [&](const auto& b) {
+      return isInsertBlock(b) && b->id == targetInsertId;
+    });
+    if (it != lane.end()) { target = &lane; slot = it; break; }
+  }
+  if (target == nullptr) return {};
+  pushChainHistory();
+  const auto id = juce::Uuid().toString().toStdString();
+  Lane fresh;
+  fresh.push_back(std::make_unique<ChainBlock>(id, ChainBlockType::REVERB));
+  fresh.front()->mixNormalized = 0.25f;
+  prepareChain(fresh);
+  *slot = std::move(fresh.front());
+  alignBranchLaneLengths();
+  refreshIrTailLength();
+  bumpChainRevision();
+  return id;
+}
+
 std::string TONE3000Processor::landToneBlock(std::unique_ptr<ChainBlock> block,
                                              const juce::String& side, int index) {
   const std::string newId = block->id;
@@ -341,7 +366,11 @@ std::string TONE3000Processor::landToneBlock(std::unique_ptr<ChainBlock> block,
   alignBranchLaneLengths();
 
   bumpChainRevision();
-  queueActiveModelLoad(*findBlockById(newId));
+  if (findBlockById(newId)->type == ChainBlockType::REVERB) {
+    refreshIrTailLength();
+  } else {
+    queueActiveModelLoad(*findBlockById(newId));
+  }
   return newId;
 }
 
@@ -374,6 +403,13 @@ std::string TONE3000Processor::duplicateChainBlock(const std::string& sourceBloc
   const std::string newId = juce::Uuid().toString().toStdString();
   auto clone = std::make_unique<ChainBlock>(newId, source->type);
   applyBlockSettings(*clone, serializeBlockSettings(*source));
+  if (source->type == ChainBlockType::REVERB) {
+    Lane fresh;
+    fresh.push_back(std::move(clone));
+    prepareChain(fresh);
+    landToneBlock(std::move(fresh.front()), side, index);
+    return newId;
+  }
   setToneOnBlock(*clone, source->toneId, source->toneJson, source->toneVar);
   clone->activeModelId = source->activeModelId;
   clone->modelCache = source->modelCache;
@@ -434,6 +470,13 @@ std::string TONE3000Processor::pasteChainBlock(const juce::String& side, int ind
       chainBlockTypeFromString(blockClipboardSettings.getProperty("type").toString());
   auto block = std::make_unique<ChainBlock>(newId, type);
   applyBlockSettings(*block, blockClipboardSettings);
+  if (type == ChainBlockType::REVERB) {
+    Lane fresh;
+    fresh.push_back(std::move(block));
+    prepareChain(fresh);
+    landToneBlock(std::move(fresh.front()), side, index);
+    return newId;
+  }
   const juce::String toneJson = blockClipboardSettings.getProperty("toneJson").toString();
   setToneOnBlock(*block, blockClipboardSettings.getProperty("toneId", 0), toneJson,
                  juce::JSON::parse(toneJson));
@@ -772,7 +815,8 @@ void TONE3000Processor::markBlockLoadFailed(const std::string& blockId) {
 bool TONE3000Processor::retryModelLoad(const std::string& blockId) {
   juce::ScopedLock lock(chainMutex);
   ChainBlock* block = findBlockById(blockId);
-  if (block == nullptr || block->type == ChainBlockType::INSERT || !block->loadFailed)
+  if (block == nullptr || (block->type != ChainBlockType::NAM &&
+                           block->type != ChainBlockType::IR) || !block->loadFailed)
     return false;
 
   block->loadFailed = false;
@@ -970,7 +1014,7 @@ juce::var TONE3000Processor::getChainState(int knownRevision) const {
   // can't stall the audio thread on lock contention.
   struct BlockRow {
     juce::String id;
-    bool isInsert = false;
+    bool isInsert = false, isReverb = false;
     juce::var toneSummary;
     int toneId = 0;
     int activeModelId = 0;
@@ -980,6 +1024,7 @@ juce::var TONE3000Processor::getChainState(int knownRevision) const {
     bool enabled = true, normalize = true;
     double slimSize = 0.0;
     float inputGain = 0.5f, outputGain = 0.5f, mix = 1.0f;
+    float roomSize = 0.5f;
     juce::var eq;
     bool rtFailed = false;
   };
@@ -1019,6 +1064,7 @@ juce::var TONE3000Processor::getChainState(int knownRevision) const {
           out.push_back(std::move(row));
           continue;
         }
+        row.isReverb = block->type == ChainBlockType::REVERB;
         row.toneSummary = block->toneSummary;
         row.toneId = block->toneId;
         row.activeModelId = block->activeModelId;
@@ -1047,6 +1093,7 @@ juce::var TONE3000Processor::getChainState(int knownRevision) const {
         row.inputGain = block->inputGainNormalized;
         row.outputGain = block->outputGainNormalized;
         row.mix = block->mixNormalized;
+        row.roomSize = block->reverbRoomSize;
         row.eq = block->eq.toVar();
         out.push_back(std::move(row));
       }
@@ -1088,7 +1135,7 @@ juce::var TONE3000Processor::getChainState(int knownRevision) const {
         continue;
       }
 
-      item->setProperty("kind", "tone");
+      item->setProperty("kind", row.isReverb ? "reverb" : "tone");
 
       // Slim tone summary, nested (not spread) so runtime fields never
       // collide with tone fields. Built once when the tone was set (see
@@ -1125,6 +1172,7 @@ juce::var TONE3000Processor::getChainState(int knownRevision) const {
       params->setProperty("inputGain", row.inputGain);
       params->setProperty("outputGain", row.outputGain);
       params->setProperty("mix", row.mix);
+      if (row.isReverb) params->setProperty("roomSize", row.roomSize);
       params->setProperty("eq", row.eq);
       item->setProperty("params", juce::var(params.get()));
 
@@ -1473,7 +1521,8 @@ bool TONE3000Processor::setBlockParam(const std::string& blockId, const juce::St
     return false;
 
   // Validate before recording history, so failed calls never leave an entry.
-  const bool isContinuous = param == "inputGain" || param == "outputGain" || param == "mix";
+  const bool isContinuous = param == "inputGain" || param == "outputGain" || param == "mix" ||
+                            (param == "roomSize" && block->type == ChainBlockType::REVERB);
   const bool isKnown = isContinuous || param == "enabled" || param == "normalize";
   if (!isKnown) {
     DBG("setBlockParam: unknown param: " << param);
@@ -1485,7 +1534,10 @@ bool TONE3000Processor::setBlockParam(const std::string& blockId, const juce::St
                                 : juce::String());
 
   if (param == "enabled") {
+    if (block->type == ChainBlockType::REVERB && !block->enabled && value > 0.5)
+      for (auto& reverb : block->reverb) reverb.reset();
     block->enabled = value > 0.5;
+    if (block->type == ChainBlockType::REVERB) refreshIrTailLength();
   } else if (param == "normalize") {
     block->normalizeEnabled = value > 0.5;
   } else if (param == "inputGain") {
@@ -1494,6 +1546,8 @@ bool TONE3000Processor::setBlockParam(const std::string& blockId, const juce::St
     block->outputGainNormalized = juce::jlimit(0.0f, 1.0f, static_cast<float>(value));
   } else if (param == "mix") {
     block->mixNormalized = juce::jlimit(0.0f, 1.0f, static_cast<float>(value));
+  } else if (param == "roomSize") {
+    block->reverbRoomSize = juce::jlimit(0.0f, 1.0f, static_cast<float>(value));
   }
 
   // Continuous drags settle into one bump after the gesture ends; discrete

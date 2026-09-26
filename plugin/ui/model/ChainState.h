@@ -64,6 +64,7 @@ struct BlockParams {
   double inputGain = 0.5;
   double outputGain = 0.5;
   double mix = 1;
+  double roomSize = 0.5;
   BlockEqParams eq;
 };
 
@@ -104,6 +105,7 @@ struct ToneSummary {
 struct ChainItem {
   std::string blockId;
   bool isInsert = true;
+  bool isReverb = false;
 
   // Tone-block fields (unused for inserts).
   ToneSummary tone;
@@ -116,7 +118,7 @@ struct ChainItem {
   std::optional<double> outputLevelDbu;
   BlockParams params;
 
-  bool isTone() const { return !isInsert; }
+  bool isTone() const { return !isInsert && !isReverb; }
 };
 
 struct PresetInfo {

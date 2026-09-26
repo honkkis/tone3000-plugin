@@ -189,6 +189,8 @@ public:
   // simplest recovery when tone3000.com was unreachable mid-load.
   bool retryModelLoad(const std::string& blockId);
   bool removeChainBlock(const std::string& blockId);
+  // Insert a local algorithmic effect into the selected slot; no model download.
+  std::string addReverbBlock(const std::string& targetInsertId);
   bool reorderChainBlocks(const std::vector<std::string>& newOrder);
   // Move a block into the other lane at the given index (stereo mode drag
   // across chains). Engines move with the block; insert slots can't move.
@@ -660,6 +662,7 @@ private:
   // hold chainMutex; getTailLengthSeconds reads the atomic lock-free.
   void refreshIrTailLength();
   std::atomic<int> irTailBaseSamples{0};
+  std::atomic<bool> reverbTailPresent{false};
 
   // The chain the UI edits/adds to right now (Left in mono mode, or the active side in stereo).
   std::vector<std::unique_ptr<ChainBlock>>& activeChain();
