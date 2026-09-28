@@ -1,6 +1,7 @@
 #include "PluginSettingsPage.h"
 
 #include "InlineChrome.h"
+#include "core/Design.h"
 #include "core/Fonts.h"
 #include "core/Paint.h"
 #include "core/Theme.h"
@@ -19,6 +20,12 @@ const std::vector<SelectField::Option> kOsFactorOptions = {
     {"0", "2X - Default", {}}, {"1", "4X", {}}, {"2", "8X", {}}};
 
 RichText copy(std::initializer_list<TextRun> runs) { return RichText(runs); }
+
+// How an effect's advanced deck opens on this platform (Help.cpp's gesture).
+juce::String deckGesture() {
+  return design::kCoarsePointer ? "Touch and hold the knob for the advanced deck."
+                                : "Right-click the knob for the advanced deck.";
+}
 }  // namespace
 
 // DbuField
@@ -83,6 +90,11 @@ PluginSettingsPage::PluginSettingsPage(Services& services)
     : FormStack(form::kSectionGap),
       services_(services),
       infoBar_("Info Bar", "Strip under the faceplate with hover tips and CPU load."),
+      effects_("Effects", "Which effects appear on the faceplate. View only: your sound and presets don't change."),
+      showGate_("Gate", "Noise gate threshold and power switch. " + deckGesture()),
+      showTranspose_("Transpose", "Pitch shift semitones and power switch. " + deckGesture()),
+      effectsTip_(copy({TextRun::plain("An effect with "), TextRun::inlineBox(inline_chrome::icon(Icon::Power)),
+                        TextRun::plain(" on always shows, even when hidden here.")})),
       namSize_("NAM A2 Size",
                "Default size for new NAM blocks. Existing blocks keep their own, so presets load as saved."),
       lite_("A2-Lite", "Sounds great and uses less CPU"),
@@ -123,9 +135,13 @@ PluginSettingsPage::PluginSettingsPage(Services& services)
       midi_("MIDI Mapping",
             "Control the plugin from pedals and knobs. Mappings are saved with the plugin and work in your DAW too."),
       midiSection_(services),
+      presets_("Presets",
+               "Your saved presets are files in a folder you can back up, share, or copy to another computer."),
+      openPresets_("Open presets folder", FormButton::text(form::kBodyPx, false, theme::kLinkBlue)),
+      openPresetsBox_(openPresets_, static_cast<float>(openPresets_.preferredHeight())),
       diagnostics_("Diagnostics", "Copy recent diagnostic logs to the clipboard and paste them into a bug report."),
       copyLogs_("Copy Logs", FormButton::cta()),
-      revealLogs_("Reveal log file on disk", FormButton::text(form::kSmallPx, false, theme::kSubtle)),
+      revealLogs_("Reveal log file on disk", FormButton::text(form::kBodyPx, false, theme::kLinkBlue)),
       copyLogsBox_(copyLogs_, static_cast<float>(copyLogs_.preferredHeight())),
       revealLogsBox_(revealLogs_, static_cast<float>(revealLogs_.preferredHeight())),
       logStatus_(juce::String(), form::kSmallPx),
@@ -135,6 +151,18 @@ PluginSettingsPage::PluginSettingsPage(Services& services)
   // Info Bar.
   infoBar_.onChange = [this](bool on) { services_.hints.setEnabled(on); };
   add(infoBar_);
+
+  // Effects (view settings; the faceplate reads the same keys). The two
+  // toggles read as children of the section.
+  showGate_.setNested();
+  showTranspose_.setNested();
+  effects_.content().setGap(form::kControlGap);
+  effects_.content().add(showGate_);
+  effects_.content().add(showTranspose_);
+  effects_.content().add(effectsTip_);
+  showGate_.onChange = [this](bool on) { services_.prefs.setBool(UiPrefs::kShowGateControl, on); };
+  showTranspose_.onChange = [this](bool on) { services_.prefs.setBool(UiPrefs::kShowTransposeControl, on); };
+  add(effects_);
 
   // NAM A2 Size.
   namSize_.setInlineLabel();
@@ -182,6 +210,15 @@ PluginSettingsPage::PluginSettingsPage(Services& services)
   midi_.content().add(midiSection_);
   add(midi_);
 
+  // Presets: a link to the folder the files live in. Hidden where there is
+  // no file browser to open (iOS).
+  if (services_.backend.canOpenPresetsFolder()) {
+    presets_.setInlineLabel();
+    presets_.content().add(openPresetsBox_);
+    openPresets_.onClick = [this] { services_.backend.openPresetsFolder(); };
+    add(presets_);
+  }
+
   // Diagnostics.
   diagnostics_.setInlineLabel();
   diagnostics_.content().setGap(form::kControlGap);
@@ -223,13 +260,15 @@ PluginSettingsPage::~PluginSettingsPage() {
 }
 
 void PluginSettingsPage::prefChanged(const juce::String& key) {
-  if (key == UiPrefs::kShowHints || key == UiPrefs::kShowBlockSizeControl ||
-      key == UiPrefs::kShowBlockNormalizeControl)
+  if (key == UiPrefs::kShowHints || key == UiPrefs::kShowGateControl || key == UiPrefs::kShowTransposeControl ||
+      key == UiPrefs::kShowBlockSizeControl || key == UiPrefs::kShowBlockNormalizeControl)
     syncPrefs();
 }
 
 void PluginSettingsPage::syncPrefs() {
   infoBar_.setValue(services_.hints.enabled());
+  showGate_.setValue(services_.prefs.getBool(UiPrefs::kShowGateControl, true));
+  showTranspose_.setValue(services_.prefs.getBool(UiPrefs::kShowTransposeControl, false));
   const bool size = services_.prefs.getBool(UiPrefs::kShowBlockSizeControl, false);
   blockSize_.setValue(size);
   blockSize_.setExpanded(size);

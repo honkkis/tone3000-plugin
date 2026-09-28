@@ -1,8 +1,9 @@
 // Plugin Settings (Settings.tsx pluginTab): one scrollable page of options
-// that work in every build: Info Bar, NAM A2 size default, the per-block
+// that work in every build: Info Bar, the Effects view toggles (which of
+// gate / transpose the faceplate shows), NAM A2 size default, the per-block
 // size / normalization controls, calibration (with its dBu field),
-// oversampling (with its rate), multi-core, MIDI Mapping, diagnostics, and
-// the version / update footer.
+// oversampling (with its rate), multi-core, MIDI Mapping, Presets (open the
+// user presets folder), diagnostics, and the version / update footer.
 #pragma once
 
 #include <memory>
@@ -42,6 +43,11 @@ private:
   Services& services_;
 
   ToggleRow infoBar_;
+  // Effects: view-only toggles for the faceplate's gate / transpose groups
+  // (Faceplate shows a powered effect regardless; the tip says so).
+  FieldRow effects_;
+  ToggleRow showGate_, showTranspose_;
+  TipRow effectsTip_;
   FieldRow namSize_;
   RadioOption lite_, full_;
   ToggleRow blockSize_;
@@ -62,6 +68,10 @@ private:
 
   FieldRow midi_;
   MidiMapSection midiSection_;
+
+  FieldRow presets_;
+  FormButton openPresets_;
+  FormBox openPresetsBox_;
 
   FieldRow diagnostics_;
   FormButton copyLogs_, revealLogs_;

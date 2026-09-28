@@ -41,6 +41,13 @@ constexpr SliderDefault kSliders[] = {
     {"chainPanLeft", 0.0f},      {"chainPanRight", 1.0f},
     {"toneBass", 0.5f},          {"toneMid", 0.55f},      {"toneTreble", 0.45f},
     {"gateThreshold", 0.35f},    {"inputCalibrationLevel", 0.5f},
+    // The gate deck's real-unit defaults (50 ms / 20 ms / 80 dB) on their
+    // normalised maps (KnobScale.h).
+    {"gateRelease", 0.5f},       {"gateHold", 0.1f},      {"gateRange", 1.0f},
+    // Transpose at 0 st (centre) with its deck at the defaults: 0 cents,
+    // tonality Off (top), the 30 ms buffer (second of four detents).
+    {"transposeSemitones", 0.5f}, {"transposeFine", 0.5f}, {"transposeTonality", 1.0f},
+    {"transposeWindow", 1.0f / 3.0f},
 };
 struct ToggleDefault {
   const char* id;
@@ -55,6 +62,7 @@ constexpr ToggleDefault kToggles[] = {
     {"chainSoloLeft", false},          {"chainSoloRight", false},
     {"chainInvertLeft", false},        {"chainInvertRight", false},
     {"gateEnabled", true},             {"toneEqEnabled", true},
+    {"transposeEnabled", false},
     {"calibrateInput", false},         {"osEnabled", false},
 };
 
@@ -237,6 +245,33 @@ bool MockBackend::loadPreset(const juce::String& presetId) {
       break;
     }
   }
+  return true;
+}
+
+bool MockBackend::movePreset(const juce::String& presetId, int delta) {
+  presetMoves_.push_back({presetId, delta});
+  auto* all = presets_.getArray();
+  if (all == nullptr || delta == 0) return false;
+  // Same rule as PresetManager::move: shift by `delta` within the preset's
+  // own section, clamped to that section's ends, then rewrite the whole
+  // list user-first / factory-second the way list() returns it.
+  int index = -1;
+  for (int i = 0; i < all->size(); ++i)
+    if ((*all)[i]["id"].toString() == presetId) index = i;
+  if (index < 0) return false;
+  const bool factory = (*all)[index]["factory"];
+  juce::Array<juce::var> section, others;
+  for (const auto& p : *all) (static_cast<bool>(p["factory"]) == factory ? section : others).add(p);
+  int from = -1;
+  for (int i = 0; i < section.size(); ++i)
+    if (section[i]["id"].toString() == presetId) from = i;
+  const int to = juce::jlimit(0, section.size() - 1, from + delta);
+  if (to == from) return false;
+  section.move(from, to);
+  juce::Array<juce::var> ordered;
+  ordered.addArray(factory ? others : section);
+  ordered.addArray(factory ? section : others);
+  presets_ = ordered;
   return true;
 }
 

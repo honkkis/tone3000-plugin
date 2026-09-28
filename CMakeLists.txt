@@ -891,4 +891,5 @@ add_subdirectory(plugin) # Add plugin project
 # those builds.
 if (NOT T3K_IOS AND NOT T3K_ANDROID)
     add_subdirectory(test)   # DSP test suite (DspTests, see script/test-dsp.sh)
+    add_subdirectory(tools)  # maintainer utilities (PresetTool), EXCLUDE_FROM_ALL
 endif()

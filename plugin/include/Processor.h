@@ -24,6 +24,7 @@
 #include "RtWorkerPool.h"
 #include "MidiMapper.h"
 #include "NoiseGate.h"
+#include "Transpose.h"
 #include "Spread.h"
 #include "StereoOffset.h"
 #include "PresetManager.h"
@@ -402,6 +403,9 @@ public:
   // mute-spliced like a preset load. Returns false (leaving the audio
   // untouched) when the state is already at default.
   bool resetToDefault();
+
+  // Where user presets are saved (Settings > Presets opens it).
+  juce::File getUserPresetsDir() const { return presetManager.userPresetsDir(); }
 
   // Re-root the internal preset store at an explicit directory (tests use a
   // temp dir so preset/program behavior can be driven without touching the
@@ -912,6 +916,10 @@ private:
   // Boundary latency in host samples (0 at a 48k host). Constant per host
   // rate; chain edits never change reported latency.
   int chainBoundaryLatency = 0;
+  // Reports boundary + transpose latency to the host. Message thread:
+  // prepareToPlay, and the transpose power / window parameter changes (the
+  // only runtime latency edges).
+  void updateLatency();
   // Second channel handed to the boundary when the host buffer is mono (the
   // boundary is a fixed 2-channel container). Silent in mono chain mode;
   // with stereo chains it becomes the Right lane's working channel: fed a
@@ -980,6 +988,13 @@ private:
   NoiseGate inputGate;
   bool gateWasEnabled = true;
 
+  // Input-stage pitch shifter (post gate, host rate; see Transpose.h). Runs
+  // while powered and through its power-off blend, then not at all, so a
+  // powered-off plugin stays bit-exact and zero-latency. The latency it
+  // adds is reported from the message thread (see updateLatency), never
+  // from processBlock.
+  Transpose transpose;
+
   // Raw APVTS parameter atomics, resolved once in the constructor. The audio
   // thread reads these every block; getRawParameterValue is a string-keyed
   // map lookup and has no business on the RT path.
@@ -1012,12 +1027,20 @@ private:
     std::atomic<float>* toneTreble = nullptr;
     std::atomic<float>* gateThreshold = nullptr;
     std::atomic<float>* gateEnabled = nullptr;
+    std::atomic<float>* gateRelease = nullptr;
+    std::atomic<float>* gateHold = nullptr;
+    std::atomic<float>* gateRange = nullptr;
     std::atomic<float>* toneEqEnabled = nullptr;
     std::atomic<float>* targetLoudness = nullptr;
     std::atomic<float>* calibrateInput = nullptr;
     std::atomic<float>* inputCalibrationLevel = nullptr;
     std::atomic<float>* osEnabled = nullptr;
     std::atomic<float>* osFactor = nullptr;
+    std::atomic<float>* transposeEnabled = nullptr;
+    std::atomic<float>* transposeSemitones = nullptr;
+    std::atomic<float>* transposeFine = nullptr;
+    std::atomic<float>* transposeTonality = nullptr;
+    std::atomic<float>* transposeWindow = nullptr;
   } paramRefs;
   void resolveParamRefs();
 
@@ -1063,10 +1086,15 @@ private:
   float cacheTrebleTone = 5.0f;
   float cacheGateThreshold = -80.0f;
   bool cacheGateEnabled = true;
+  float cacheGateRelease = 50.0f;   // ms
+  float cacheGateHold = 20.0f;      // ms
+  float cacheGateRange = 80.0f;     // dB of attenuation when closed
   bool cacheToneEqEnabled = true;
   float cacheTargetLoudness = -18.0f;
   bool cacheCalibrateInput = false;
   float cacheInputCalibrationLevel = 12.0f;
+  bool cacheTransposeEnabled = false;
+  Transpose::Params cacheTranspose;
 
   void updateEqCoefficients();
   void updateCachedParameters();

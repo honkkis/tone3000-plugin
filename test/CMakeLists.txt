@@ -23,6 +23,7 @@ target_sources(DspTests PRIVATE
     src/duplicate_tests.cpp
     src/eq_post_routing_tests.cpp
     src/factory_preset_tests.cpp
+    src/gate_tests.cpp
     src/host_program_tests.cpp
     src/ir_temp_file_tests.cpp
     src/local_load_tests.cpp
@@ -35,6 +36,7 @@ target_sources(DspTests PRIVATE
     src/state_cache_tests.cpp
     src/swap_fade_tests.cpp
     src/tone_refresh_tests.cpp
+    src/transpose_tests.cpp
     src/tuner_tests.cpp
     src/wav_repair_tests.cpp
     src/worker_pool_tests.cpp
@@ -46,6 +48,7 @@ target_sources(DspTests PRIVATE
     ../plugin/src/BlockSpectrum.cpp
     ../plugin/src/MidiMapper.cpp
     ../plugin/src/NamEngine.cpp
+    ../plugin/src/PresetFile.cpp
     ../plugin/src/PresetManager.cpp
     ../plugin/src/Processor.cpp
     ../plugin/src/ProcessorChain.cpp
@@ -60,6 +63,7 @@ target_sources(DspTests PRIVATE
     # also what the plugin itself compiles to everywhere but iOS).
     ../plugin/src/StandaloneStateAutosave.cpp
     ../plugin/src/StereoOffset.cpp
+    ../plugin/src/Transpose.cpp
     ../plugin/src/TunerDetector.cpp
 )
 

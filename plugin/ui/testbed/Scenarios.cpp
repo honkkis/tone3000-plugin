@@ -79,6 +79,16 @@ const std::map<juce::String, Drive>& drives() {
          if (meter != nullptr) hoverAt(root, *meter, meter->clipDotCentre(0));
          wait(100);
        }},
+      {"chrome-gate-deck",
+       [](PluginRoot& root, MockBackend&) {
+         clickByHelp(root, "Gate:", /*right=*/true);
+         wait(200);
+       }},
+      {"chrome-transpose-deck",
+       [](PluginRoot& root, MockBackend&) {
+         clickByHelp(root, "Transpose:", /*right=*/true);
+         wait(200);
+       }},
       {"chrome-spread-deck",
        [](PluginRoot& root, MockBackend&) {
          clickByHelp(root, "Offset:", /*right=*/true);
@@ -375,6 +385,11 @@ const std::map<juce::String, Drive>& drives() {
          if (auto* picker = find(root, [](juce::Component& c) { return c.getName() == "Control to map"; }))
            click(root, *picker);
          wait(400);
+       }},
+      {"settings-presets",
+       [](PluginRoot& root, MockBackend&) {
+         openSettings(root);
+         scrollSettingsTo(root, "Presets");
        }},
       {"settings-system", [](PluginRoot& root, MockBackend&) { openSystemSettings(root); }},
       {"settings-system-mic-denied", [](PluginRoot& root, MockBackend&) { openSystemSettings(root); }},

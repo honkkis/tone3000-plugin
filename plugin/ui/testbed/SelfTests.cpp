@@ -630,6 +630,44 @@ struct ReadoutTests : juce::UnitTest {
     expectEquals(scales::gainDb().format(0.0), juce::String("-24.0 dB"));
     expectEquals(scales::gateDb().format(0.333), juce::String("-67 dB"));
     expectEquals(scales::tone().format(0.5), juce::String("5.0"));
+
+    beginTest("gate deck readouts mirror the processor's real-unit ranges");
+    expectEquals(scales::gateReleaseMs().format(0.0), juce::String("5 ms"));
+    expectEquals(scales::gateReleaseMs().format(1.0), juce::String("500 ms"));
+    // The defaults (50 ms, 20 ms) land on round normalised values: the
+    // MockBackend's seeds and the deck's reset must agree with these.
+    expectEquals(scales::gateReleaseMs().format(0.5), juce::String("50 ms"));
+    expectWithinAbsoluteError(scales::gateReleaseMs().fromDisplay(50), 0.5, 1e-6);
+    expectEquals(scales::gateReleaseMs().format(scales::gateReleaseMs().fromDisplay(100)),
+                 juce::String("100 ms"));
+    expectEquals(scales::gateHoldMs().format(0.1), juce::String("20 ms"));
+    expectEquals(scales::gateHoldMs().format(0.0), juce::String("0 ms"));
+    expectEquals(scales::gateRangeDb().format(1.0), juce::String("80 dB"));
+    expectEquals(scales::gateRangeDb().format(0.0), juce::String("20 dB"));
+
+    beginTest("transpose readouts mirror the processor's ranges");
+    // Whole semitones, signed; the centre is 0 (the MockBackend seed).
+    expectEquals(scales::semitones().format(0.5), juce::String("0 st"));
+    expectEquals(scales::semitones().format(0.0), juce::String("-12 st"));
+    expectEquals(scales::semitones().format(1.0), juce::String("+12 st"));
+    expectEquals(scales::semitones().format(scales::semitones().fromDisplay(-2)), juce::String("-2 st"));
+    expectEquals(scales::semitones().editText(0.5), juce::String("0"));
+    expectEquals(scales::cents().format(0.5), juce::String("0 ct"));
+    expectEquals(scales::cents().format(1.0), juce::String("+50 ct"));
+    expectEquals(scales::cents().format(0.0), juce::String("-50 ct"));
+    // Tonality: log 1-20 kHz, the top end reads Off (the default seed).
+    expectEquals(scales::tonalityHz().format(1.0), juce::String("Off"));
+    expectEquals(scales::tonalityHz().format(0.0), juce::String("1.0 kHz"));
+    expectWithinAbsoluteError(scales::tonalityHz().toDisplay(scales::tonalityHz().fromDisplay(8000)), 8000.0,
+                              1e-6);
+    // Window: four buffer detents, read as the latency each reports; typed
+    // values snap to the nearest.
+    expectEquals(scales::windowMs().format(0.0), juce::String("11 ms"));
+    expectEquals(scales::windowMs().format(1.0 / 3), juce::String("16 ms"));
+    expectEquals(scales::windowMs().format(2.0 / 3), juce::String("21 ms"));
+    expectEquals(scales::windowMs().format(1.0), juce::String("31 ms"));
+    expectWithinAbsoluteError(scales::windowMs().fromDisplay(15), 1.0 / 3, 1e-6);
+    expectWithinAbsoluteError(scales::windowMs().fromDisplay(30), 1.0, 1e-6);
     expectEquals(scales::offsetMs().format(0.5), juce::String("0 ms"));
     expectEquals(scales::offsetMs().format(0.25), juce::String("12.0 ms L"));
     expectEquals(scales::crossoverHz().format(0.5), juce::String("130 Hz"));
@@ -1007,6 +1045,102 @@ struct TouchScrollTests : juce::UnitTest {
   }
 };
 
+// Drag-reordering a preset in the browser, through the peer. The drop
+// rebuilds the row list (destroying the dragged Row) and then asks the store
+// to move the preset: the move must carry the real id, not whatever is left
+// in the freed row, and the browser must end up showing the store's order.
+struct PresetReorderTests : juce::UnitTest {
+  PresetReorderTests() : juce::UnitTest("Preset reorder", "ui") {}
+
+  static void pump(int ms) { juce::MessageManager::getInstance()->runDispatchLoopUntil(ms); }
+
+  struct Pointer {
+    juce::ComponentPeer& peer;
+    juce::int64 time = juce::Time::currentTimeMillis();
+    void at(juce::Point<float> pos, bool down) {
+      peer.handleMouseEvent(juce::MouseInputSource::InputSourceType::mouse, pos,
+                            down ? juce::ModifierKeys::leftButtonModifier : juce::ModifierKeys(), 0.0f, 0.0f, ++time);
+      pump(10);
+    }
+  };
+
+  // The browser row showing `name`, or null.
+  static juce::Component* rowNamed(juce::Component& root, const juce::String& name) {
+    auto* label = drive::find(root, [&](juce::Component& c) {
+      auto* b = dynamic_cast<Clickable*>(&c);
+      return b != nullptr && c.isShowing() && b->accessibleName() == name && c.getHelpText().isEmpty();
+    });
+    return label != nullptr ? label->getParentComponent() : nullptr;
+  }
+
+  void runTest() override {
+    const auto fixtures = Fixtures::load(fixturesDir().getChildFile("scenarios.json"));
+    const auto* scenario = fixtures.find("chrome-preset-browse");  // two user presets, three factory
+    if (scenario == nullptr) {
+      expect(false, "chrome-preset-browse scenario missing");
+      return;
+    }
+    MockBackend backend(scenario->data);
+    juce::DocumentWindow window("preset reorder", juce::Colours::black, 0);
+    ScaledHost host(backend, *scenario, fixtures.root);
+    window.setContentNonOwned(&host, true);
+    window.setVisible(true);
+    pump(400);
+    auto* peer = host.getPeer();
+    expect(peer != nullptr);
+    if (peer == nullptr) return;
+    auto& root = host.pluginRoot();
+
+    beginTest("open the browser in reorder mode");
+    drive::clickByHelp(root, "Presets:");
+    pump(300);
+    drive::clickByHelp(root, "Reorder:");
+    pump(100);
+    auto* first = rowNamed(root, "My Lead Tone");
+    auto* second = rowNamed(root, "Church Sunday");
+    auto* grip = first != nullptr ? drive::find(*first, [](juce::Component& c) {
+      return c.getHelpText().startsWith("Drag:");
+    }) : nullptr;
+    expect(first != nullptr && second != nullptr && grip != nullptr);
+    if (first == nullptr || second == nullptr || grip == nullptr) return;
+    expect(first->getY() < second->getY());
+    auto idOf = [&](const juce::String& name) {
+      for (const auto& p : *backend.getPresetList()["presets"].getArray())
+        if (p["name"].toString() == name) return p["id"].toString();
+      return juce::String();
+    };
+    const auto firstId = idOf("My Lead Tone");
+    expect(firstId.isNotEmpty());
+
+    beginTest("dragging the first user preset below the second moves it by +1");
+    Pointer pointer{*peer};
+    const auto start = peer->getComponent().getLocalPoint(grip, grip->getLocalBounds().getCentre().toFloat());
+    const float rowHeight = static_cast<float>(first->getHeight());
+    pointer.at(start, true);
+    for (int i = 1; i <= 6; ++i) pointer.at(start.translated(0, rowHeight * 1.5f * static_cast<float>(i) / 6), true);
+    pointer.at(start.translated(0, rowHeight * 1.5f), false);
+    pump(100);
+    const auto& moves = backend.presetMoves();
+    expectEquals(static_cast<int>(moves.size()), 1);
+    if (!moves.empty()) {
+      expectEquals(moves.back().id, firstId);
+      expectEquals(moves.back().delta, 1);
+    }
+
+    beginTest("the browser shows the store's new order");
+    first = rowNamed(root, "My Lead Tone");
+    second = rowNamed(root, "Church Sunday");
+    expect(first != nullptr && second != nullptr);
+    if (first != nullptr && second != nullptr) expect(second->getY() < first->getY());
+    // User section swapped; the factory section follows it untouched.
+    const auto list = backend.getPresetList()["presets"];
+    expectEquals(list[0]["name"].toString(), juce::String("Church Sunday"));
+    expectEquals(list[1]["name"].toString(), juce::String("My Lead Tone"));
+    expectEquals(list[2]["name"].toString(), juce::String("Crunch Rhythm"));
+    window.setVisible(false);
+  }
+};
+
 // The block card's LITE / FULL toggle, clicked through the peer with the
 // per-block size setting on. The store refreshes synchronously inside the
 // click, so the card re-syncs while the toggle's own click is still on the
@@ -1178,14 +1312,107 @@ struct KnobReadoutTests : juce::UnitTest {
   }
 };
 
+// The faceplate's effects cluster: gate shows and transpose hides by
+// default, the Effects view settings flip either, a powered effect shows
+// regardless, and the plate re-spreads around whatever is showing.
+struct FaceplateEffectsTests : juce::UnitTest {
+  FaceplateEffectsTests() : juce::UnitTest("Faceplate effects", "ui") {}
+
+  static void pump(int ms) { juce::MessageManager::getInstance()->runDispatchLoopUntil(ms); }
+
+  static Knob* knob(PluginRoot& root, const juce::String& title) {
+    return dynamic_cast<Knob*>(drive::find(root, [&](juce::Component& c) {
+      return dynamic_cast<Knob*>(&c) != nullptr && c.getTitle() == title && c.isShowing();
+    }));
+  }
+
+  // The Bass knob's left edge in root coordinates: where the tone stack landed.
+  static int toneX(PluginRoot& root) {
+    auto* bass = knob(root, "Bass");
+    return bass == nullptr ? -1 : root.getLocalArea(bass, bass->getLocalBounds()).getX();
+  }
+
+  void runTest() override {
+    const auto fixtures = Fixtures::load(fixturesDir().getChildFile("scenarios.json"));
+    const auto* scenario = fixtures.find("main-mono");
+    if (scenario == nullptr) {
+      expect(false, "main-mono scenario missing");
+      return;
+    }
+    MockBackend backend(scenario->data);
+    juce::DocumentWindow window("faceplate effects", juce::Colours::black, 0);
+    ScaledHost host(backend, *scenario, fixtures.root);
+    window.setContentNonOwned(&host, true);
+    window.setVisible(true);
+    pump(400);
+    auto& root = host.pluginRoot();
+    auto& prefs = root.services().prefs;
+    auto power = [&](const char* id, bool on) {
+      if (auto* p = root.services().backend.parameter(id)) p->setValueNotifyingHost(on ? 1.0f : 0.0f);
+      pump(30);
+    };
+
+    beginTest("gate shows and transpose hides by default");
+    expect(knob(root, "Gate") != nullptr);
+    expect(knob(root, "Transpose") == nullptr);
+    const int gateOnly = toneX(root);
+
+    beginTest("the Transpose view setting brings its group out and the plate re-spreads");
+    prefs.setBool(UiPrefs::kShowTransposeControl, true);
+    pump(30);
+    auto* transpose = knob(root, "Transpose");
+    auto* gate = knob(root, "Gate");
+    expect(transpose != nullptr && gate != nullptr);
+    const int both = toneX(root);
+    expect(both > gateOnly, "the tone stack moves over for the wider cluster");
+    if (transpose != nullptr && gate != nullptr) {
+      // Grouped: the pair sits closer together than the cluster does to the
+      // tone stack.
+      const auto g = root.getLocalArea(gate, gate->getLocalBounds());
+      const auto t = root.getLocalArea(transpose, transpose->getLocalBounds());
+      const int between = t.getX() - g.getRight();
+      expect(between > 0 && between < both - t.getRight(), "gate and transpose read as one cluster");
+    }
+
+    beginTest("off again hides it, unless the effect is powered");
+    prefs.setBool(UiPrefs::kShowTransposeControl, false);
+    pump(30);
+    expect(knob(root, "Transpose") == nullptr);
+    power("transposeEnabled", true);
+    expect(knob(root, "Transpose") != nullptr, "a powered effect shows regardless of the view setting");
+    expectEquals(toneX(root), both);
+    power("transposeEnabled", false);
+    expect(knob(root, "Transpose") == nullptr, "switching it off lets the setting hide it again");
+    expectEquals(toneX(root), gateOnly);
+
+    beginTest("with no effects showing, four peers spread");
+    prefs.setBool(UiPrefs::kShowGateControl, false);
+    pump(30);
+    expect(knob(root, "Gate") != nullptr, "the mock's gate is powered, so it stays");
+    power("gateEnabled", false);
+    expect(knob(root, "Gate") == nullptr);
+    expect(toneX(root) < gateOnly, "the tone stack moves back toward the input");
+    expect(knob(root, "Input") != nullptr && knob(root, "Output") != nullptr);
+
+    beginTest("the settings restore the defaults");
+    prefs.remove(UiPrefs::kShowGateControl);
+    pump(30);
+    expect(knob(root, "Gate") != nullptr);
+    expectEquals(toneX(root), gateOnly);
+    window.setVisible(false);
+  }
+};
+
 HtmlTests htmlTests;
 FontTests fontTests;
 RichFlowTests richFlowTests;
 AccessibilityTests accessibilityTests;
 FocusPolicyTests focusPolicyTests;
 TouchScrollTests touchScrollTests;
+PresetReorderTests presetReorderTests;
 BlockSizeToggleTests blockSizeToggleTests;
 KnobReadoutTests knobReadoutTests;
+FaceplateEffectsTests faceplateEffectsTests;
 UpdateCheckTests updateCheckTests;
 ConnectionGateTests connectionGateTests;
 PitchTests pitchTests;

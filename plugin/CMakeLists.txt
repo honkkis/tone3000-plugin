@@ -429,6 +429,8 @@ target_sources(${PROJECT_NAME}
         src/StereoOffset.cpp
         include/AutoOffset.h
         src/AutoOffset.cpp
+        include/PresetFile.h
+        src/PresetFile.cpp
         include/PresetManager.h
         src/PresetManager.cpp
         include/Processor.h
@@ -445,7 +447,10 @@ target_sources(${PROJECT_NAME}
         src/NamEngine.cpp
         include/TunerDetector.h
         src/TunerDetector.cpp
+        include/Transpose.h
+        src/Transpose.cpp
 )
+
 # Include GUI for Desktop builds
 if (NOT HEADLESS)
     target_sources(${PROJECT_NAME}
