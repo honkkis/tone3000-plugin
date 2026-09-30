@@ -32,6 +32,7 @@ target_sources(DspTests PRIVATE
     src/outgain_tests.cpp
     src/padless_wav_tests.cpp
     src/preset_tests.cpp
+    src/preset_backup_tests.cpp
     src/processor_tests.cpp
     src/spread_tests.cpp
     src/state_cache_tests.cpp
@@ -49,6 +50,7 @@ target_sources(DspTests PRIVATE
     ../plugin/src/MidiMapper.cpp
     ../plugin/src/NamEngine.cpp
     ../plugin/src/PresetFile.cpp
+    ../plugin/src/PresetBackup.cpp
     ../plugin/src/PresetManager.cpp
     ../plugin/src/Processor.cpp
     ../plugin/src/ProcessorChain.cpp
