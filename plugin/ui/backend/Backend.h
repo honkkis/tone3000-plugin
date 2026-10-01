@@ -90,6 +90,15 @@ public:
   virtual bool deletePreset(const juce::String& presetId) = 0;
   virtual bool movePreset(const juce::String& presetId, int delta) = 0;
 
+  // Completion runs on the message thread. File work runs in the background.
+  using PresetTransferDone = std::function<void(juce::Result)>;
+  virtual void exportPresetBackup(const juce::File&, PresetTransferDone done) {
+    done(juce::Result::fail("Preset backup is unavailable in this preview."));
+  }
+  virtual void importPresetBackup(const juce::URL&, PresetTransferDone done) {
+    done(juce::Result::fail("Preset backup is unavailable in this preview."));
+  }
+
   // Audio device settings (standalone only; void var elsewhere)
   virtual juce::var getAudioDeviceState() = 0;
   virtual juce::var setAudioDeviceType(const juce::String& typeName) = 0;

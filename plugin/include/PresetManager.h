@@ -112,6 +112,13 @@ public:
       global order can't disagree. Persists the whole current order. */
   bool move(const juce::String& id, int delta) const;
 
+  /** ZIP backup of every user preset, with embedded model/IR data and list order.
+      Import validates/stages the whole archive first, then adds copies with new
+      ids and unique names. Existing presets, factory presets and the loaded
+      chain are never replaced. These file-only operations can run off-thread. */
+  juce::Result exportBackup(const juce::File& archive) const;
+  juce::Result importBackup(const juce::File& archive) const;
+
   /** presetfile::sanitizeStem, kept here for callers/tests of the store. */
   static juce::String sanitizeFileStem(const juce::String& name) {
     return t3k::presetfile::sanitizeStem(name);

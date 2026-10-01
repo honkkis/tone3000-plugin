@@ -42,6 +42,9 @@ private:
   void rememberMachineDefault(const ParamBinding& param);
   void setAndRemember(ParamBinding& param, float normalised);
   void showLogStatus(const juce::String& status);
+  void exportPresets();
+  void importPresets();
+  void setPresetTransferBusy(bool busy);
 
   Services& services_;
 
@@ -73,6 +76,10 @@ private:
   FieldRow presets_;
   FormButton openPresets_;
   FormBox openPresetsBox_;
+  FormButton exportPresets_, importPresets_;
+  FormBox exportPresetsBox_, importPresetsBox_;
+  std::unique_ptr<juce::FileChooser> presetChooser_;
+  bool presetTransferBusy_{false};
 
   FieldRow diagnostics_;
   FormButton copyLogs_, revealLogs_;
