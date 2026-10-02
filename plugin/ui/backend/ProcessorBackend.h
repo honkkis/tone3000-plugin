@@ -69,7 +69,7 @@ public:
   bool movePreset(const juce::String& presetId, int delta) override;
 
   void exportPresetBackup(const juce::File& file, PresetTransferDone done) override;
-  void importPresetBackup(const juce::URL& url, PresetTransferDone done) override;
+  void importPresetBackup(const juce::URL& url, PresetImportMode mode, PresetTransferDone done) override;
 
   juce::var getAudioDeviceState() override;
   juce::var setAudioDeviceType(const juce::String& typeName) override;

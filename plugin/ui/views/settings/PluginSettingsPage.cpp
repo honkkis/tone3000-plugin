@@ -133,7 +133,7 @@ PluginSettingsPage::PluginSettingsPage(Services& services)
       midiSection_(services),
       presets_("Presets",
                "Back up all saved user presets, including their NAM and IR files, to a ZIP. "
-               "Import adds copies without replacing existing presets. Save edits before exporting."),
+               "Import can add copies or replace all user presets. Save edits before exporting."),
       openPresets_("Open presets folder", FormButton::text(form::kBodyPx, false, theme::kLinkBlue)),
       openPresetsBox_(openPresets_, static_cast<float>(openPresets_.preferredHeight())),
       exportPresets_("Export all user presets", FormButton::cta()),
@@ -366,12 +366,44 @@ void PluginSettingsPage::importPresets() {
   if (presetTransferBusy_) return;
   setPresetTransferBusy(true);
   juce::Component::SafePointer<PluginSettingsPage> self(this);
+  juce::PopupMenu menu;
+  menu.addItem(1, "Add copies");
+  menu.addItem(2, "Replace all user presets...");
+  menu.showMenuAsync(juce::PopupMenu::Options()
+      .withTargetComponent(&importPresets_)
+      .withStandardItemHeight(design::kCoarsePointer ? 64 : 0)
+      .withMinimumWidth(design::kCoarsePointer ? 320 : 0),
+      [self](int choice) {
+        if (self == nullptr) return;
+        if (choice == 1) {
+          self->choosePresetBackup(PresetImportMode::addCopies);
+        } else if (choice == 2) {
+          juce::AlertWindow::showAsync(
+              juce::MessageBoxOptions()
+                  .withIconType(juce::MessageBoxIconType::WarningIcon)
+                  .withTitle("Replace all user presets?")
+                  .withMessage("Presets not in this backup will be removed. A recovery ZIP of your saved user presets will be kept in the app's PresetBackups folder. Factory presets and global settings will be kept.")
+                  .withButton("Replace all")
+                  .withButton("Cancel"),
+              [self](int result) {
+                if (self == nullptr) return;
+                if (result == 1) self->choosePresetBackup(PresetImportMode::replaceAll);
+                else self->setPresetTransferBusy(false);
+              });
+        } else {
+          self->setPresetTransferBusy(false);
+        }
+      });
+}
+
+void PluginSettingsPage::choosePresetBackup(PresetImportMode mode) {
+  juce::Component::SafePointer<PluginSettingsPage> self(this);
   presetChooser_ = std::make_unique<juce::FileChooser>("Import preset backup", juce::File{}, "*.zip");
   presetChooser_->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-      [self](const juce::FileChooser& chooser) {
+      [self, mode](const juce::FileChooser& chooser) {
         if (self == nullptr) return;
         const auto url = chooser.getURLResult();
-        juce::MessageManager::callAsync([self, url] {
+        juce::MessageManager::callAsync([self, url, mode] {
           if (self == nullptr) return;
           self->presetChooser_.reset();
           if (url.isEmpty()) {
@@ -379,11 +411,13 @@ void PluginSettingsPage::importPresets() {
             return;
           }
           self->services_.toast.show("Importing preset backup...");
-          self->services_.backend.importPresetBackup(url, [self](juce::Result result) {
+          self->services_.backend.importPresetBackup(url, mode, [self, mode](juce::Result result) {
             if (self == nullptr) return;
             self->setPresetTransferBusy(false);
             self->services_.presets.refresh();
-            self->services_.toast.show(result.wasOk() ? "User presets imported" : result.getErrorMessage());
+            self->services_.toast.show(result.wasOk()
+                ? (mode == PresetImportMode::replaceAll ? "User presets replaced" : "User presets imported")
+                : result.getErrorMessage());
           });
         });
       });

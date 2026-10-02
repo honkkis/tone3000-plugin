@@ -44,6 +44,7 @@ private:
   void showLogStatus(const juce::String& status);
   void exportPresets();
   void importPresets();
+  void choosePresetBackup(PresetImportMode mode);
   void setPresetTransferBusy(bool busy);
 
   Services& services_;

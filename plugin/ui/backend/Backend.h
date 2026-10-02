@@ -9,6 +9,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "PresetImportMode.h"
 
 #include <string>
 #include <vector>
@@ -95,7 +96,7 @@ public:
   virtual void exportPresetBackup(const juce::File&, PresetTransferDone done) {
     done(juce::Result::fail("Preset backup is unavailable in this preview."));
   }
-  virtual void importPresetBackup(const juce::URL&, PresetTransferDone done) {
+  virtual void importPresetBackup(const juce::URL&, PresetImportMode, PresetTransferDone done) {
     done(juce::Result::fail("Preset backup is unavailable in this preview."));
   }
 
