@@ -365,7 +365,10 @@ void PluginSettingsPage::importPresets() {
   juce::PopupMenu menu;
   menu.addItem(1, "Add copies");
   menu.addItem(2, "Replace all user presets...");
-  menu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(&importPresets_),
+  menu.showMenuAsync(juce::PopupMenu::Options()
+      .withTargetComponent(&importPresets_)
+      .withStandardItemHeight(design::kCoarsePointer ? 64 : 0)
+      .withMinimumWidth(design::kCoarsePointer ? 320 : 0),
       [self](int choice) {
         if (self == nullptr) return;
         if (choice == 1) {
