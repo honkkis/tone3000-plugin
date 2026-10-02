@@ -152,4 +152,119 @@ TEST(PresetBackupTest, LegacyFileKeepsNameAndDataInBackup) {
   EXPECT_EQ(dest.list()[0].name, "Legacy");
   EXPECT_TRUE(dest.load(dest.list()[0].id).getChildWithName("ChainSnapshot").isEquivalentTo(preset(7).getChildWithName("ChainSnapshot")));
 }
+TEST(PresetBackupTest, ReplaceRestoresUserOrderKeepsFactoryOrderAndCreatesRecoveryZip) {
+  TempDir tmp;
+  PresetManager source(tmp.dir.getChildFile("source"));
+  const auto amp = source.save("Amp", preset(1));
+  const auto boost = source.save("Boost", preset(2));
+  ASSERT_TRUE(source.move(boost.id, -1));
+  const auto zip = tmp.dir.getChildFile("backup.zip");
+  ASSERT_TRUE(source.exportBackup(zip).wasOk());
+
+  PresetManager dest(tmp.dir.getChildFile("destination"));
+  const auto extra = dest.save("Extra", preset(99));
+  const auto factoryDir = dest.userPresetsDir().getChildFile("Factory");
+  ASSERT_TRUE(factoryDir.createDirectory().wasOk());
+  for (const auto& name : {"A", "B"}) {
+    auto tree = preset(50);
+    tree.setProperty("id", name, nullptr);
+    tree.setProperty("name", name, nullptr);
+    ASSERT_TRUE(t3k::presetfile::write(factoryDir.getChildFile(juce::String(name) + ".t3kpreset"), tree));
+  }
+  ASSERT_TRUE(dest.move("factory:B", -1));
+  ASSERT_TRUE(dest.importBackup(zip, t3k::PresetImportMode::replaceAll).wasOk());
+  const auto list = dest.list();
+  ASSERT_EQ(list.size(), 4u);
+  EXPECT_EQ(list[0].name, "Boost");
+  EXPECT_EQ(list[1].name, "Amp");
+  EXPECT_EQ(list[2].id, "factory:B");
+  EXPECT_EQ(list[3].id, "factory:A");
+  EXPECT_TRUE(source.load(amp.id).getChildWithName("ChainSnapshot").isEquivalentTo(
+      dest.load(list[1].id).getChildWithName("ChainSnapshot")));
+
+  const auto recoveryFiles = tmp.dir.getChildFile("PresetBackups")
+      .findChildFiles(juce::File::findFiles, false, "*.zip");
+  ASSERT_EQ(recoveryFiles.size(), 1);
+  PresetManager recovered(tmp.dir.getChildFile("recovered"));
+  ASSERT_TRUE(recovered.importBackup(recoveryFiles[0]).wasOk());
+  ASSERT_EQ(recovered.list().size(), 1u);
+  EXPECT_EQ(recovered.list()[0].name, "Extra");
+  EXPECT_TRUE(recovered.load(recovered.list()[0].id).getChildWithName("ChainSnapshot").isEquivalentTo(
+      preset(99).getChildWithName("ChainSnapshot")));
+  EXPECT_FALSE(dest.load(extra.id).isValid());
+}
+
+TEST(PresetBackupTest, ReplacingTwiceDoesNotAddCopiesOrNameSuffixes) {
+  TempDir tmp;
+  PresetManager source(tmp.dir.getChildFile("source"));
+  source.save("Lead", preset(1));
+  const auto zip = tmp.dir.getChildFile("backup.zip");
+  ASSERT_TRUE(source.exportBackup(zip).wasOk());
+  PresetManager dest(tmp.dir.getChildFile("destination"));
+  dest.save("Lead", preset(99));
+  for (int i = 0; i < 2; ++i) {
+    ASSERT_TRUE(dest.importBackup(zip, t3k::PresetImportMode::replaceAll).wasOk());
+    ASSERT_EQ(dest.list().size(), 1u);
+    EXPECT_EQ(dest.list()[0].name, "Lead");
+    EXPECT_TRUE(dest.load(dest.list()[0].id).getChildWithName("ChainSnapshot").isEquivalentTo(
+        preset(1).getChildWithName("ChainSnapshot")));
+  }
+  EXPECT_EQ(tmp.dir.getChildFile("PresetBackups").findChildFiles(
+      juce::File::findFiles, false, "*.zip").size(), 2);
+}
+
+TEST(PresetBackupTest, InvalidReplacementDoesNotChangeExistingFilesOrOrder) {
+  TempDir tmp;
+  const auto valid = tmp.dir.getChildFile("valid.t3kpreset");
+  ASSERT_TRUE(t3k::presetfile::write(valid, preset(1)));
+  const auto invalid = tmp.dir.getChildFile("invalid.t3kpreset");
+  ASSERT_TRUE(invalid.replaceWithText("invalid"));
+  const auto zip = tmp.dir.getChildFile("invalid.zip");
+  writeZip(zip, R"({"format":"TONE3000 user preset backup","version":1,"presets":["a.t3kpreset","b.t3kpreset"]})",
+      {{"a.t3kpreset", valid}, {"b.t3kpreset", invalid}});
+  PresetManager dest(tmp.dir.getChildFile("destination"));
+  const auto original = dest.save("Existing", preset(99));
+  const auto order = dest.userPresetsDir().getChildFile("order.json");
+  ASSERT_TRUE(order.replaceWithText("[\"" + original.id + "\"]"));
+  const auto before = order.loadFileAsString();
+  EXPECT_TRUE(dest.importBackup(zip, t3k::PresetImportMode::replaceAll).failed());
+  ASSERT_EQ(dest.list().size(), 1u);
+  EXPECT_EQ(dest.list()[0].id, original.id);
+  EXPECT_EQ(order.loadFileAsString(), before);
+  EXPECT_FALSE(tmp.dir.getChildFile("PresetBackups").exists());
+}
+
+TEST(PresetBackupTest, ReplacementStopsWhenExistingPresetsCannotBeBackedUp) {
+  TempDir tmp;
+  PresetManager source(tmp.dir.getChildFile("source"));
+  source.save("New", preset(1));
+  const auto zip = tmp.dir.getChildFile("backup.zip");
+  ASSERT_TRUE(source.exportBackup(zip).wasOk());
+  PresetManager dest(tmp.dir.getChildFile("destination"));
+  const auto original = dest.save("Existing", preset(99));
+  const auto corrupt = dest.userPresetsDir().getChildFile("Corrupt.t3kpreset");
+  ASSERT_TRUE(corrupt.replaceWithText("keep this file"));
+  EXPECT_TRUE(dest.importBackup(zip, t3k::PresetImportMode::replaceAll).failed());
+  EXPECT_EQ(corrupt.loadFileAsString(), "keep this file");
+  ASSERT_EQ(dest.list().size(), 1u);
+  EXPECT_EQ(dest.list()[0].id, original.id);
+}
+
+TEST(PresetBackupTest, ReplacementRejectsAnUnwritableOrderPathWithoutChangingPresets) {
+  TempDir tmp;
+  PresetManager source(tmp.dir.getChildFile("source"));
+  source.save("New", preset(1));
+  const auto zip = tmp.dir.getChildFile("backup.zip");
+  ASSERT_TRUE(source.exportBackup(zip).wasOk());
+  PresetManager dest(tmp.dir.getChildFile("destination"));
+  const auto original = dest.save("Existing", preset(99));
+  const auto order = dest.userPresetsDir().getChildFile("order.json");
+  order.deleteFile();
+  ASSERT_TRUE(order.createDirectory().wasOk());
+  EXPECT_TRUE(dest.importBackup(zip, t3k::PresetImportMode::replaceAll).failed());
+  EXPECT_TRUE(order.isDirectory());
+  ASSERT_EQ(dest.list().size(), 1u);
+  EXPECT_EQ(dest.list()[0].id, original.id);
+}
+
 } // namespace

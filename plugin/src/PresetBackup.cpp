@@ -10,9 +10,10 @@ constexpr const char* kManifest = "backup.json";
 
 struct ScratchDirectory {
   juce::File dir;
+  bool keep = false;
   explicit ScratchDirectory(const juce::File& parent)
       : dir(parent.getChildFile("t3k-backup-" + juce::Uuid().toString())) {}
-  ~ScratchDirectory() { dir.deleteRecursively(); }
+  ~ScratchDirectory() { if (!keep) dir.deleteRecursively(); }
 };
 
 bool validPreset(const juce::ValueTree& tree) {
@@ -73,7 +74,8 @@ juce::Result PresetManager::exportBackup(const juce::File& archive) const {
   return output.overwriteTargetFileWithTemporary() ? juce::Result::ok() : fail("Could not save the backup ZIP.");
 }
 
-juce::Result PresetManager::importBackup(const juce::File& archive) const {
+juce::Result PresetManager::importBackup(const juce::File& archive, t3k::PresetImportMode mode) const {
+  const bool replaceAll = mode == t3k::PresetImportMode::replaceAll;
   juce::ZipFile zip(archive);
   if (zip.getNumEntries() < 2 || zip.getNumEntries() > kMaxPresets + 1)
     return fail("This is not a TONE3000 preset backup.");
@@ -114,9 +116,13 @@ juce::Result PresetManager::importBackup(const juce::File& archive) const {
   if (scratch.dir.createDirectory().failed()) return fail("Could not create the import folder.");
   std::set<juce::String> usedNames;
   juce::StringArray order;
+  juce::StringArray factoryOrder;
   for (const auto& entry : entries()) {
-    order.add(entry.info.id);
-    if (!entry.info.factory) usedNames.insert(entry.info.name.toLowerCase());
+    if (entry.info.factory) factoryOrder.add(entry.info.id);
+    if (!replaceAll) {
+      order.add(entry.info.id);
+      if (!entry.info.factory) usedNames.insert(entry.info.name.toLowerCase());
+    }
   }
   std::set<juce::String> imported;
   std::vector<juce::File> staged;
@@ -154,13 +160,54 @@ juce::Result PresetManager::importBackup(const juce::File& archive) const {
     order.add("user:" + id);
   }
 
+  // Keep an independent ZIP after a successful replacement, too. Create it
+  // only after validating every incoming preset and before touching the store.
+  const auto oldFiles = userDir.findChildFiles(juce::File::findFiles, false, "*.t3kpreset");
+  if (replaceAll && orderFile().exists() && !orderFile().existsAsFile())
+    return fail("Could not replace the preset order. No presets were replaced.");
+  if (replaceAll && !oldFiles.isEmpty()) {
+    const auto backups = userDir.getSiblingFile("PresetBackups");
+    if (backups.createDirectory().failed()) return fail("Could not create the recovery backup folder. No presets were replaced.");
+    const auto recovery = backups.getNonexistentChildFile(
+        "TONE3000-before-restore-" + juce::Time::getCurrentTime().formatted("%Y%m%d-%H%M%S"), ".zip");
+    const auto result = exportBackup(recovery);
+    if (result.failed()) return fail("Could not back up existing presets. No presets were replaced. " + result.getErrorMessage());
+  }
+
   std::vector<juce::File> committed;
-  auto rollback = [&] { for (const auto& file : committed) file.deleteFile(); };
+  std::vector<std::pair<juce::File, juce::File>> originals;
+  auto rollback = [&]() {
+    bool ok = true;
+    for (const auto& file : committed)
+      if (file.exists() && !file.deleteFile()) ok = false;
+    for (auto it = originals.rbegin(); it != originals.rend(); ++it)
+      if (!it->first.moveFileTo(it->second)) ok = false;
+    if (!ok) scratch.keep = true; // never delete the only copy on rollback failure
+    return ok;
+  };
+  auto restoreFailure = [&](const juce::String& message) {
+    return rollback() ? fail(message) : fail(message + " Recovery files were kept in " + scratch.dir.getFullPathName());
+  };
+  if (replaceAll) {
+    const auto previous = scratch.dir.getChildFile("previous");
+    if (previous.createDirectory().failed()) return fail("Could not prepare the restore. No presets were replaced.");
+    auto preserve = [&](const juce::File& original) {
+      const auto saved = previous.getChildFile(original.getFileName());
+      if (!original.moveFileTo(saved)) return false;
+      originals.emplace_back(saved, original);
+      return true;
+    };
+    for (const auto& original : oldFiles)
+      if (!preserve(original)) return restoreFailure("Could not replace existing presets.");
+    if (orderFile().exists() && !preserve(orderFile()))
+      return restoreFailure("Could not replace the preset order.");
+    // Retain the factory order but put the restored user section first.
+    order.addArray(factoryOrder);
+  }
   for (const auto& file : staged) {
     const auto target = t3k::presetfile::uniqueFile(userDir, file.getFileNameWithoutExtension());
     if (!file.moveFileTo(target)) {
-      rollback();
-      return fail("Could not save the imported presets.");
+      return restoreFailure("Could not save the imported presets.");
     }
     committed.push_back(target);
   }
@@ -171,8 +218,7 @@ juce::Result PresetManager::importBackup(const juce::File& archive) const {
   juce::TemporaryFile orderTemp(orderFile());
   if (!orderTemp.getFile().replaceWithText(juce::JSON::toString(juce::var(ids))) ||
       !orderTemp.overwriteTargetFileWithTemporary()) {
-    rollback();
-    return fail("Could not save the imported preset order.");
+    return restoreFailure("Could not save the imported preset order.");
   }
   return juce::Result::ok();
 }
