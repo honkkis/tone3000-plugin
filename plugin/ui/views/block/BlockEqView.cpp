@@ -6,6 +6,7 @@
 #include "core/AlphaTween.h"
 #include "core/Design.h"
 #include "core/EqMath.h"
+#include "core/EqPinchGesture.h"
 #include "core/Fonts.h"
 #include "core/Help.h"
 #include "core/Icons.h"
@@ -167,8 +168,13 @@ public:
 
   void enabledChanged(bool animate) {
     const bool on = owner_.eqEnabled();
+    if (!on) cancelGesture();
     fade_.animateTo(on ? 1.0f : theme::kDisabledOpacity, kDimMs, animate);
     setInterceptsMouseClicks(on, on);
+  }
+
+  void visibilityChanged() override {
+    if (!isVisible()) cancelGesture();
   }
 
   void paint(juce::Graphics& g) override {
@@ -261,6 +267,23 @@ public:
   }
 
   void mouseDown(const juce::MouseEvent& e) override {
+    const auto& bands = owner_.bands();
+    if (!owner_.eqEnabled() || selected_ >= static_cast<int>(bands.size())) return;
+    if (e.source.isTouch()) {
+      // The first touch may grab a dot or start on empty graph space. The
+      // second touch edits the already selected band, never a different dot.
+      pinch_.down(e.source.getIndex(), screenPoint(e), selected_, bands[static_cast<size_t>(selected_)].q);
+      if (pinch_.blocksSingleDrag()) {
+        drag_.reset();
+        lastTap_.reset();
+        setViewportIgnoreDragFlag(true);
+        owner_.setDragging(true);
+        pin_ = std::make_unique<HintPin>(owner_.services().hints, help::text(help::Key::eqDot));
+        return;
+      }
+    } else if (pinch_.hasContacts()) {
+      return;
+    }
     const auto hit = dotAt(e);
     setViewportIgnoreDragFlag(hit.has_value());  // a dot drag edits; the graph around it pans
     if (!hit) {
@@ -275,7 +298,7 @@ public:
     }
     // Always allow a fresh grab, even immediately after the previous drag.
     // A touch double tap is recognised on release, once we know it was a tap.
-    drag_ = Drag{*hit, graphPoint(e).toDouble()};
+    drag_ = Drag{*hit, graphPoint(e).toDouble(), e.source.getIndex(), e.source.isTouch()};
     owner_.setDragging(true);
     pin_ = std::make_unique<HintPin>(owner_.services().hints, help::text(help::Key::eqDot));
   }
@@ -283,7 +306,21 @@ public:
   // Delta-based (not absolute) so Shift = 8x finer can toggle mid-drag
   // without the dot jumping.
   void mouseDrag(const juce::MouseEvent& e) override {
-    if (!drag_) return;
+    if (e.source.isTouch()) {
+      const auto q = pinch_.move(e.source.getIndex(), screenPoint(e), kEqMinQ, kEqMaxQ);
+      if (pinch_.blocksSingleDrag()) {
+        if (q) {
+          const auto index = pinch_.band();
+          if (index && *index < static_cast<int>(owner_.bands().size())) {
+            auto band = owner_.bands()[static_cast<size_t>(*index)];
+            band.q = *q;
+            owner_.updateBand(*index, band);
+          }
+        }
+        return;
+      }
+    }
+    if (!isDragSource(e)) return;
     if (e.mouseWasDraggedSinceMouseDown()) lastTap_.reset();
     const auto& bands = owner_.bands();
     const int index = drag_->index;
@@ -309,7 +346,20 @@ public:
   }
 
   void mouseUp(const juce::MouseEvent& e) override {
-    if (!drag_) return;
+    if (e.source.isTouch()) {
+      const bool wasPinch = pinch_.blocksSingleDrag();
+      pinch_.up(e.source.getIndex());
+      if (wasPinch) {
+        lastTap_.reset();
+        if (!pinch_.hasContacts()) {
+          pin_.reset();
+          owner_.setDragging(false);
+          setViewportIgnoreDragFlag(false);
+        }
+        return;
+      }
+    }
+    if (!isDragSource(e)) return;
     const int index = drag_->index;
     drag_.reset();
     pin_.reset();
@@ -332,6 +382,7 @@ public:
 
   // Wheel tunes the selected band's Q.
   void mouseWheelMove(const juce::MouseEvent& e, const juce::MouseWheelDetails& wheel) override {
+    if (pinch_.hasContacts()) return;
     const auto& bands = owner_.bands();
     if (selected_ >= static_cast<int>(bands.size())) return;
     auto band = bands[static_cast<size_t>(selected_)];
@@ -353,7 +404,27 @@ private:
   struct Drag {
     int index;
     juce::Point<double> last;
+    int source;
+    bool touch;
   };
+
+  bool isDragSource(const juce::MouseEvent& e) const {
+    return drag_ && drag_->source == e.source.getIndex() && drag_->touch == e.source.isTouch();
+  }
+
+  static EqPinchGesture::Point screenPoint(const juce::MouseEvent& e) {
+    const auto p = e.eventComponent->localPointToGlobal(e.position);
+    return {p.x, p.y};
+  }
+
+  void cancelGesture() {
+    if (drag_ || pinch_.hasContacts()) owner_.setDragging(false);
+    drag_.reset();
+    pinch_ = {};
+    lastTap_.reset();
+    pin_.reset();
+    setViewportIgnoreDragFlag(false);
+  }
 
   // Pointer position in graph (SVG viewBox) space.
   static juce::Point<float> graphPoint(const juce::MouseEvent& e) {
@@ -479,6 +550,7 @@ private:
 
   BlockEqView& owner_;
   int selected_ = 1;
+  EqPinchGesture pinch_;
   std::optional<Drag> drag_;
   std::optional<Tap> lastTap_;
   std::unique_ptr<HintPin> pin_;
