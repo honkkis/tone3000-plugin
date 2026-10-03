@@ -503,6 +503,17 @@ target_compile_definitions(${PROJECT_NAME}
         JUCE_VST3_CAN_REPLACE_VST2=0
 )
 
+# iOS: JUCE's rate discovery repeatedly calls setPreferredSampleRate on the
+# audio session. With a newly connected USB interface this can block launch
+# long enough for the scene-create watchdog to kill the app. Use JUCE's
+# explicit-rate path instead; the device still negotiates the requested rate
+# when opening. Keep this on the shared target so the standalone inherits it.
+if (T3K_IOS)
+    target_compile_definitions(${PROJECT_NAME}
+        PUBLIC JUCE_IOS_AUDIO_EXPLICIT_SAMPLERATES=44100,48000
+    )
+endif()
+
 # Native networking (juce::URL / WebInputStream), used for model downloads
 # (ProcessorModelLoader). macOS/Windows use the OS HTTP stacks and ignore
 # JUCE_USE_CURL entirely. On Linux, curl is the ONLY backend with TLS: with
