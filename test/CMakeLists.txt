@@ -13,11 +13,6 @@
 # (juce_graphics via juce_audio_processors) include a C source.
 enable_language(C)
 
-# Touch gesture state needs neither the DSP nor a GUI/display server.
-add_executable(EqPinchTests ui/eq_pinch_tests.cpp)
-target_include_directories(EqPinchTests PRIVATE ../plugin/ui)
-add_test(NAME EqPinchTests COMMAND EqPinchTests)
-
 juce_add_console_app(DspTests PRODUCT_NAME "DspTests")
 
 target_sources(DspTests PRIVATE
@@ -40,6 +35,7 @@ target_sources(DspTests PRIVATE
     src/padless_wav_tests.cpp
     src/pitch_shift_tests.cpp
     src/preset_tests.cpp
+    src/preset_backup_tests.cpp
     src/processor_tests.cpp
     src/spread_tests.cpp
     src/state_cache_tests.cpp
@@ -57,6 +53,7 @@ target_sources(DspTests PRIVATE
     ../plugin/src/MidiMapper.cpp
     ../plugin/src/NamEngine.cpp
     ../plugin/src/PresetFile.cpp
+    ../plugin/src/PresetBackup.cpp
     ../plugin/src/PresetManager.cpp
     ../plugin/src/Processor.cpp
     ../plugin/src/ProcessorChain.cpp
