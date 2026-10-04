@@ -507,7 +507,7 @@ target_compile_definitions(${PROJECT_NAME}
 # patch synchronizes the actual rate before JUCE discovers buffer sizes.
 if (T3K_IOS)
     target_compile_definitions(${PROJECT_NAME}
-        PUBLIC JUCE_IOS_AUDIO_EXPLICIT_SAMPLERATES=44100,48000
+        PUBLIC JUCE_IOS_AUDIO_EXPLICIT_SAMPLERATES=44100,48000,88200,96000,176400,192000
     )
 endif()
 
