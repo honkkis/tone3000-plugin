@@ -326,6 +326,8 @@ target_sources(${PROJECT_NAME}
         include/BlockSpectrum.h
         src/BlockSpectrum.cpp
         include/ChainBlock.h
+        include/MonoLooper.h
+        include/GlobalLooper.h
         include/ChainHistory.h
         include/ImageDeck.h
         include/Spread.h

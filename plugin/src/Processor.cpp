@@ -559,7 +559,8 @@ double TONE3000Processor::getTailLengthSeconds() const {
   //    reference NAM plugin reports the same allowance for VST3 tail checks.
   const double irTailSeconds = irTailBaseSamples.load() / kChainBaseSampleRate;
   const double dcBlockerTailSeconds = 10.0 / 5.0;
-  return std::max(irTailSeconds, dcBlockerTailSeconds);
+  const double looperTail = globalLooper.getState() == MonoLooper::State::playing ? 40.0 : 0.0;
+  return std::max({irTailSeconds, dcBlockerTailSeconds, looperTail});
 }
 
 // The host program API (getNumPrograms and friends) lives in
@@ -978,6 +979,8 @@ void TONE3000Processor::prepareToPlay(double sampleRate, int samplesPerBlock) {
   midFilter.reset();
   trebleFilter.reset();
   dcBlocker.reset();
+
+  globalLooper.prepare(sampleRate);
 
   // Scratch buffers, sized once here; the RT path never resizes them.
   // The lane dry scratches live in the chain domain, where a callback can
@@ -2040,8 +2043,8 @@ void TONE3000Processor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mid
   // ###########
   // Output gain (level ±24 dB, same on both channels; the balance trim
   // lives in the post-chain image matrix above, pre-pan). Smoothed so knob
-  // moves glide instead of stepping once per block. Per-channel output
-  // meters ride the same pass.
+  // moves glide instead of stepping once per block. The global looper is
+  // added afterwards, so Output changes affect live guitar but not the take.
   // ###########
   {
     outputGainSmoother.setTargetValue(mainStageGain(cacheOutputLevel));
@@ -2052,11 +2055,18 @@ void TONE3000Processor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mid
     for (int i = 0; i < numSamples; ++i) {
       const float g = outputGainSmoother.getNextValue();
       l[i] *= g;
+      if (r) r[i] *= g;
+    }
+
+    // Record post-Output and add playback at its recorded level. Pause during
+    // auto-align so its probe cannot enter a take or its measurement.
+    if (autoOffset.state() == AutoOffset::State::Idle)
+      globalLooper.process(l, r, numSamples, stereoRig);
+
+    // Meter the final sum, including loop playback.
+    for (int i = 0; i < numSamples; ++i) {
       peakL = std::max(peakL, std::abs(l[i]));
-      if (r) {
-        r[i] *= g;
-        peakR = std::max(peakR, std::abs(r[i]));
-      }
+      if (r) peakR = std::max(peakR, std::abs(r[i]));
     }
     if (numChannels < 2) 
       peakR = peakL;
@@ -2345,4 +2355,24 @@ juce::File TONE3000Processor::getLogFile() {
   return juce::FileLogger::getSystemLogFileFolder()
       .getChildFile("TONE3000")
       .getChildFile("TONE3000.log");
+}
+
+// Global looper controls (take and transport are never serialized in presets).
+bool TONE3000Processor::looperCommand(const juce::String& command) {
+  if (command == "record") globalLooper.request(GlobalLooper::Command::record);
+  else if (command == "stop") globalLooper.request(GlobalLooper::Command::stop);
+  else if (command == "play") globalLooper.request(GlobalLooper::Command::play);
+  else return false;
+  return true;
+}
+
+juce::var TONE3000Processor::getLooperState() const {
+  auto* result = new juce::DynamicObject();
+  const auto state = globalLooper.getState();
+  result->setProperty("state", state == MonoLooper::State::recording ? "Recording" :
+                     state == MonoLooper::State::playing ? "Playing" : "Stopped");
+  result->setProperty("seconds", globalLooper.seconds());
+  result->setProperty("mix", globalLooper.getMix());
+  result->setProperty("pan", globalLooper.getPan());
+  return juce::var(result);
 }
