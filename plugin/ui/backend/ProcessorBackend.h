@@ -27,6 +27,11 @@ public:
   bool redoChain() override;
   bool resetToDefault() override;
 
+  bool looperCommand(const juce::String& cmd) override { return processor_.looperCommand(cmd); }
+  void setLooperMix(float value) override { processor_.setLooperMix(value); }
+  void setLooperPan(float value) override { processor_.setLooperPan(value); }
+  juce::var getLooperState() override { return processor_.getLooperState(); }
+
   std::string loadTone(const juce::String& toneJson, const std::string& targetInsertId) override;
   juce::var loadLocalTonePath(const juce::File& source, const std::string& targetInsertId) override;
   juce::var loadLocalToneUrls(const juce::Array<juce::URL>& sources,
