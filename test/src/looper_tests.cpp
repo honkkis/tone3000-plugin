@@ -238,7 +238,11 @@ TEST(GlobalLooperProcessor, RecordsAfterOutputAndPlaybackIgnoresLaterOutputChang
   ASSERT_GT(recordedPeak, 0.01f);
   ASSERT_TRUE(proc.looperCommand("play"));
   auto playSilence = [&] {
-    for (int b = 0; b < 10; ++b) { buffer.clear(); proc.processBlock(buffer, midi); }
+    // The live path includes a 5 Hz DC blocker. Its decay is still audible
+    // after 100 ms, and raising Output amplifies that residual live signal.
+    // Drain its documented 2-second tail before measuring loop playback.
+    // Keep the strict tolerances: the loop itself must not follow Output.
+    for (int b = 0; b < 200; ++b) { buffer.clear(); proc.processBlock(buffer, midi); }
     return buffer.getMagnitude(0, 0, 480);
   };
   const float before = playSilence();
