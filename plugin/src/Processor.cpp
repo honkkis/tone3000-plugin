@@ -18,6 +18,33 @@
 #include <juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h>
 #endif
 
+namespace {
+
+// JUCE's current logger is a non-owning, process-wide pointer. Keep our
+// logger alive across processor instances, then detach and delete it when
+// this module shuts down. A logger supplied by the host remains untouched.
+class ProcessFileLoggerOwner {
+public:
+  explicit ProcessFileLoggerOwner(const juce::File& file) {
+    if (juce::Logger::getCurrentLogger() == nullptr) {
+      logger = std::make_unique<juce::FileLogger>(file, "TONE3000 JUCE Log");
+      juce::Logger::setCurrentLogger(logger.get());
+    }
+  }
+  ~ProcessFileLoggerOwner() {
+    if (logger && juce::Logger::getCurrentLogger() == logger.get())
+      juce::Logger::setCurrentLogger(nullptr);
+  }
+private:
+  std::unique_ptr<juce::FileLogger> logger;
+};
+
+void installProcessFileLogger(const juce::File& file) {
+  static ProcessFileLoggerOwner owner(file);
+}
+
+} // namespace
+
 // ##############
 // MAIN PROCESSOR
 // ##############
@@ -38,9 +65,7 @@ TONE3000Processor::TONE3000Processor()
   // Attach the file logger first thing: state restore (and the background
   // model loads it queues) runs before prepareToPlay, and its diagnostics
   // used to vanish because the logger didn't exist yet.
-  if (!juce::Logger::getCurrentLogger()) {
-    juce::Logger::setCurrentLogger(new juce::FileLogger(getLogFile(), "TONE3000 JUCE Log"));
-  }
+  installProcessFileLogger(getLogFile());
 
   // Heal the per-user app-data folder before anything writes to it: a
   // root-owned folder fails every settings save and drop-stash write while
@@ -529,8 +554,8 @@ TONE3000Processor::~TONE3000Processor() {
 
   juce::Logger::writeToLog("[Processor] Destructor called");
 
-  // Clean up the logger to prevent leaks
-  juce::Logger::setCurrentLogger(nullptr);
+  // The module owns the logger; other processors and their background
+  // workers may still be using it after this instance is destroyed.
 }
 
 // #############
