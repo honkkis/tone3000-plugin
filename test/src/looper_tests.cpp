@@ -171,6 +171,36 @@ TEST(GlobalLooperProcessor, RetiredExperimentalBlockIsRemovedFromOldPresets) {
   for (const auto& item : *state["chain"].getArray()) EXPECT_EQ(item["kind"].toString(), "insert");
 }
 
+TEST(GlobalLooperProcessor, MidiRecordingRequiresEnableAndTogglesToPlayback) {
+  ChainTestProcessor proc;
+  proc.setPlayConfigDetails(2, 2, 48000, 480);
+  proc.prepareToPlay(48000, 480);
+  ASSERT_TRUE(proc.midiMapper.setCcMapping("looperRecord", 6));
+  juce::AudioBuffer<float> buffer(2, 480);
+  juce::MidiBuffer press;
+  press.addEvent(juce::MidiMessage::controllerEvent(1, 6, 127), 0);
+  buffer.clear();
+  proc.processBlock(buffer, press);
+  EXPECT_EQ(proc.getLooperState()["state"].toString(), "Stopped");
+  proc.setLooperMidiEnabled(true);
+  proc.processBlock(buffer, press);
+  EXPECT_EQ(proc.getLooperState()["state"].toString(), "Recording");
+  juce::MidiBuffer release;
+  release.addEvent(juce::MidiMessage::controllerEvent(1, 6, 0), 0);
+  proc.processBlock(buffer, release);
+  EXPECT_EQ(proc.getLooperState()["state"].toString(), "Recording");
+  proc.processBlock(buffer, press);
+  EXPECT_EQ(proc.getLooperState()["state"].toString(), "Playing");
+  proc.processBlock(buffer, press);
+  EXPECT_EQ(proc.getLooperState()["state"].toString(), "Recording");
+  EXPECT_NEAR(static_cast<double>(proc.getLooperState()["seconds"]), 0.01, 1e-6);
+  proc.setLooperMidiEnabled(false);
+  proc.looperCommand("stop"); // same Stop request as disabling in the UI
+  proc.processBlock(buffer, press);
+  EXPECT_EQ(proc.getLooperState()["state"].toString(), "Stopped");
+  proc.releaseResources();
+}
+
 TEST(GlobalLooper, MonoOutputIgnoresPanWithoutAttenuatingTheLoop) {
   GlobalLooper loop;
   loop.prepare(1000); loop.setMix(1); loop.setPan(1);

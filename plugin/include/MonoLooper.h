@@ -18,7 +18,17 @@ public:
     blend = 0;
     panLeft = panRight = 1.0f;
   }
-  void record() { length = position = 0; state = State::recording; }
+  void record() { length = position = 0; state = State::recording; playAtLimit = false; blend = 0; }
+  // One pedal: every new recording replaces the take; finishing it loops.
+  void toggleRecord() {
+    if (state == State::recording) {
+      stop();
+      play();
+    } else {
+      record();
+      playAtLimit = true;
+    }
+  }
   void stop() { state = State::stopped; }
   void play() { if (length) { position = 0; state = State::playing; } }
   bool isSilent() const { return blend <= 0; }
@@ -34,7 +44,10 @@ public:
     for (int i = 0; i < count; ++i) {
       if (enabled && state == State::recording && length < audio.size()) {
         audio[length++] = right ? 0.5f * (left[i] + right[i]) : left[i];
-        if (length == audio.size()) stop();
+        if (length == audio.size()) {
+          stop();
+          if (playAtLimit) play();
+        }
       }
       const bool playing = enabled && state == State::playing && length > 0;
       const float target = playing ? 2.0f * std::clamp(mix, 0.0f, 1.0f) : 0.0f;
@@ -60,6 +73,7 @@ private:
   double rate = 0;
   size_t length = 0, position = 0;
   State state = State::stopped;
+  bool playAtLimit = false;
   float blend = 0;
   float panLeft = 1.0f, panRight = 1.0f;
 };

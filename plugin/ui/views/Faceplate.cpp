@@ -300,6 +300,7 @@ void Faceplate::showEffect(juce::Component& group, bool show) {
 void Faceplate::syncFlags() {
   const auto& chain = services_.chain.state();
   const bool showLooper = services_.prefs.getBool(UiPrefs::kShowLooperControl, false);
+  services_.backend.setLooperMidiEnabled(showLooper);
   if (!showLooper && looper_.isVisible()) {
     services_.backend.looperCommand("stop");
     if (onHideLooper) onHideLooper();

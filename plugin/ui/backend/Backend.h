@@ -42,6 +42,7 @@ public:
 
   // Global looper (runtime tool, not a preset block).
   virtual bool looperCommand(const juce::String&) { return false; }
+  virtual void setLooperMidiEnabled(bool) {}
   virtual void setLooperMix(float) {}
   virtual void setLooperPan(float) {}
   virtual juce::var getLooperState() { return {}; }

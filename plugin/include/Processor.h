@@ -80,6 +80,7 @@ public:
 
   // Global post-chain looper, independent of presets. Commands apply at the next callback.
   bool looperCommand(const juce::String& command);
+  void setLooperMidiEnabled(bool enabled) { looperMidiEnabled.store(enabled); }
   void setLooperMix(float value) { globalLooper.setMix(value); }
   void setLooperPan(float value) { globalLooper.setPan(value); }
   juce::var getLooperState() const;
@@ -924,6 +925,7 @@ private:
   // Set by the UI when an Add starts; not a view mode.
   ChainSide pendingAddSide{ChainSide::Left};
   GlobalLooper globalLooper;
+  std::atomic<bool> looperMidiEnabled{false};
 
   juce::CriticalSection chainMutex;
 
