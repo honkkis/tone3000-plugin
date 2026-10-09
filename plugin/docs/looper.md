@@ -22,6 +22,26 @@ press Loop again. Closing the view leaves recording/playback running.
   It changes playback only, leaving live-guitar routing untouched. A mono
   output ignores Pan. Double-click/tap the control to return to centre.
 
+## One-button MIDI recording
+
+With Enable Looper on, choose **Settings → MIDI → Looper Record / Play**.
+Use Learn to assign a CC or note, or type a CC number. Use a dedicated
+footswitch message (for example CC 6 value 127) on each press:
+
+1. First press starts recording a fresh take.
+2. Second press ends recording and immediately starts repeating it.
+3. Third press deletes that take and starts a new recording.
+4. Fourth press ends the new recording and starts repeating it again.
+
+There is no overdubbing. A MIDI-started recording automatically begins
+playback at the 40-second limit. Momentary CC releases (127 then 0) and
+note-off messages do not advance the transport. The global MIDI channel
+filter applies, and Learn consumes its capture without starting recording.
+Turning Enable Looper off stops transport and ignores the mapped pedal;
+the mapping is retained. Closing the looper view does not disable MIDI.
+The touch Record, Stop and Play buttons keep their original behavior.
+MIDI transport changes apply at audio-buffer boundaries.
+
 The looper sits after both processing chains, their stereo-image stage and
 the global tone EQ and master Output. It records the processed guitar at
 its current Output level, summing a stereo source to mono. Playback does not

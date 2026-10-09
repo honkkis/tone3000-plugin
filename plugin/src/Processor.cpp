@@ -96,6 +96,10 @@ TONE3000Processor::TONE3000Processor()
     toggleBlockPower(index, right);
   };
   midiMapper.onStereoToggle = [this] { setStereoMode(!isStereoMode()); };
+  midiMapper.onLooperRecordToggle = [this] {
+    if (looperMidiEnabled.load(std::memory_order_relaxed))
+      globalLooper.request(GlobalLooper::Command::toggleRecord);
+  };
 
   // Every lane starts at its minimum slot layout (kMinLaneSlots pass-through
   // insert placeholders). The right lane stays invisible until stereo mode is

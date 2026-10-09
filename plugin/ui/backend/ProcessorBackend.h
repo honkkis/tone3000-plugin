@@ -28,6 +28,7 @@ public:
   bool resetToDefault() override;
 
   bool looperCommand(const juce::String& cmd) override { return processor_.looperCommand(cmd); }
+  void setLooperMidiEnabled(bool enabled) override { processor_.setLooperMidiEnabled(enabled); }
   void setLooperMix(float value) override { processor_.setLooperMix(value); }
   void setLooperPan(float value) override { processor_.setLooperPan(value); }
   juce::var getLooperState() override { return processor_.getLooperState(); }

@@ -2,19 +2,26 @@
 #include "MonoLooper.h"
 #include <atomic>
 
-// UI commands are published atomically. Only the audio thread touches the
+// UI and MIDI commands are published atomically. Only the audio thread touches the
 // take/transport; prepare() runs while callbacks are stopped. Neither the
 // UI nor preset-loading thread needs the chain lock to control this tool.
 class GlobalLooper {
 public:
-  enum class Command : unsigned { record = 1, stop = 2, play = 3 };
+  enum class Command : unsigned { record = 1, stop = 2, play = 3, toggleRecord = 4 };
   void prepare(double rate) { engine.prepare(rate); publish(); }
   void request(Command command) {
+    if (command == Command::toggleRecord) {
+      // Count presses rather than coalescing to the last command: two
+      // presses before a callback must start and finish, not start twice.
+      pending.fetch_add(toggleStep, std::memory_order_release);
+      return;
+    }
     unsigned previous = pending.load(std::memory_order_relaxed);
     unsigned next;
     do {
       // Preserve a pending Record's deletion even if Stop/Play arrives
-      // before the next audio callback. Latest transport command wins.
+      // before the next audio callback. A manual command supersedes pending
+      // pedal presses; subsequent pedal presses apply after that command.
       next = (previous & resetTake) | static_cast<unsigned>(command);
       if (command == Command::record) next |= resetTake;
     } while (!pending.compare_exchange_weak(previous, next, std::memory_order_release,
@@ -34,13 +41,15 @@ public:
       case static_cast<unsigned>(Command::play): engine.stop(); engine.play(); break;
       default: break;
     }
+    for (unsigned presses = command / toggleStep; presses > 0; --presses)
+      engine.toggleRecord();
     engine.process(left, right, samples, mix.load(), true,
                    stereoOutput ? pan.load() : 0.0f, stereoOutput);
     publish();
   }
 private:
   void publish() { state.store(static_cast<int>(engine.getState())); duration.store(engine.seconds()); }
-  static constexpr unsigned resetTake = 4, transportMask = 3;
+  static constexpr unsigned resetTake = 8, transportMask = 7, toggleStep = 16;
   MonoLooper engine;
   std::atomic<unsigned> pending{0};
   std::atomic<float> mix{0.5f}, pan{0};
