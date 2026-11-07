@@ -4,6 +4,15 @@
 // banners and modals. Laid out in design space
 // (1024 x 578 + chrome strips); the shell scales the whole thing.
 //
+// The 578 is the core's minimum. A window taller than its width calls for
+// hands the surplus to the root as a stretch (setStretch, from the shell's
+// WindowFit): the content column between header and faceplate grows by it,
+// and the screens in the column keep their titles under the header and
+// centre what is below them in the room (the chain lanes, a block's card)
+// or fill it (the tone browser, Settings, the tuner). Header, faceplate and
+// chrome strips keep their heights, so at stretch 0 nothing differs from
+// the fixed design.
+//
 // The chrome strips grow the window instead of squishing the 578px core, so
 // the banner's arrival is choreographed against the window resize
 // (useChromeChoreography) so the content column moves once, not twice:
@@ -24,9 +33,11 @@
 // box on some visits and not others. The root is the keyboard focus
 // container with a traverser that names no default; Tab with nothing
 // focused enters the tab order at either end; Escape or a press elsewhere
-// drops the focus again. Keys nothing takes (Space and Enter with nothing
-// focused, Space with a button or knob focused) fall through to the host
-// as its transport keys (NativeEditor).
+// drops the focus again. The scroll keys with nothing focused move the
+// screen in front's main scroller (frontScroller), as a browser scrolls
+// its document. Keys nothing takes (Space and Enter with nothing focused,
+// Space with a button or knob focused) fall through to the host as its
+// transport keys (NativeEditor).
 #pragma once
 
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -67,8 +78,14 @@ public:
   explicit PluginRoot(Services& services);
   ~PluginRoot() override;
 
-  // Current design-space height: the core plus whatever chrome strips show.
+  // Current design-space height: the core, its stretch and whatever chrome
+  // strips show.
   int designHeight() const { return getHeight(); }
+
+  // Design px the content column grows by beyond the core height (see the
+  // header). The shell sets it from the window it has; 0 is the design.
+  void setStretch(int px);
+  int stretch() const { return stretch_; }
 
   Services& services() { return services_; }
   juce::Component& overlayLayer() override { return overlay_; }
@@ -121,6 +138,8 @@ private:
   std::unique_ptr<Modal> openModal(Args&&... args);
   void restackModals();
   void updateChromeHeight();
+  // Our own size: the core, the stretch and the chrome strips showing.
+  void applyDesignSize();
   // Banner phase machine.
   bool viewportFits() const;
   void bannerShow();
@@ -134,6 +153,14 @@ private:
   // Which of main screen, faceplate, browser and sign-in screen show under
   // the takeovers.
   void syncTakeovers();
+  // The Settings page when it is open and nothing modal sits over it: the
+  // Tab cycle to enter with nothing focused.
+  SettingsScreen* settingsInFront() const;
+  // The screen in front's main scroller (the Settings page, the browser's
+  // results, a block's detail column, the chain lane), where the scroll
+  // keys go with nothing focused; none under a modal or on a screen that
+  // does not scroll.
+  DragScroller* frontScroller();
 
   Services& services_;
   PluginHeader header_;
@@ -153,16 +180,18 @@ private:
   HintTracker hintTracker_;
   PointerTracker pointerTracker_;
   bool hintsVisible_ = true;
+  int stretch_ = 0;
 
   BannerPhase bannerPhase_ = BannerPhase::hidden;
   DelayedCall bannerWait_;
   juce::Component* watchedParent_ = nullptr;
 
-  // The two focus rules a browser has and JUCE lacks. Keys with nothing
+  // The focus rules a browser has and JUCE lacks. Keys with nothing
   // focused go to the window's component, which we are inside of, not
-  // above, so Tab-from-nothing listens on the window. A press outside the
-  // focused control drops its focus, so a Tab-focused button never keeps
-  // Enter from the host once the user is back on the mouse.
+  // above, so Tab-from-nothing and the scroll keys for the screen in
+  // front's scroller listen on the window. A press outside the focused
+  // control drops its focus, so a Tab-focused button never keeps Enter
+  // from the host once the user is back on the mouse.
   class FocusPolicy : public juce::KeyListener, public juce::MouseListener {
   public:
     explicit FocusPolicy(PluginRoot& root) : root_(root) {}

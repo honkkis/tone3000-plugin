@@ -108,6 +108,7 @@ const std::map<juce::String, Drive>& drives() {
       // tile click (the web dropped the seed before the chain arrived) only
       // re-opens it, leaving no hover behind once the gallery is gone.
       {"main-detail", [](PluginRoot&, MockBackend&) { wait(300); }},
+      {"main-detail-stretched", [](PluginRoot&, MockBackend&) { wait(300); }},
       {"load-detail-loading", [](PluginRoot&, MockBackend&) { wait(300); }},
       {"load-detail-failed", [](PluginRoot&, MockBackend&) { wait(300); }},
       {"main-detail-info",
@@ -167,6 +168,24 @@ const std::map<juce::String, Drive>& drives() {
          wait(100);
          if (auto* login = buttonNamed(root, "Login")) click(root, *login);
          wait(300);
+         unhover(root);
+       }},
+      // The iOS AUv3: Login lands on the device page itself (no browser
+      // page to go through), the code answering a beat later.
+      {"load-oauth-app-device",
+       [](PluginRoot& root, MockBackend&) {
+         clickByHelp(root, "Account:");
+         wait(100);
+         if (auto* login = buttonNamed(root, "Login")) click(root, *login);
+         wait(400);
+         unhover(root);
+       }},
+      {"load-oauth-app-device-expired",
+       [](PluginRoot& root, MockBackend&) {
+         clickByHelp(root, "Account:");
+         wait(100);
+         if (auto* login = buttonNamed(root, "Login")) click(root, *login);
+         wait(400);
          unhover(root);
        }},
       {"load-oauth-copied",

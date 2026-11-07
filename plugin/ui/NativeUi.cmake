@@ -78,4 +78,17 @@ function(t3k_add_native_ui target)
     # two meters ticking together would repaint the whole plate between them.
     target_compile_definitions(${target} PRIVATE
         $<$<PLATFORM_ID:Darwin>:JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS=1>)
+    # iOS: sign-in is presented inside the app through
+    # ASWebAuthenticationSession (services/WebAuth.mm; App Store Guideline 4
+    # rejects a hand-off to Safari). The header is a no-op on every other
+    # platform, so only iOS compiles the ObjC++ and links the framework. The
+    # file is written for ARC, unlike JUCE's own ObjC++, and says so with an
+    # #error if the flag goes missing.
+    if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        set(_t3k_webauth "${T3K_UI_DIR}/services/WebAuth.mm")
+        target_sources(${target} PRIVATE "${_t3k_webauth}")
+        set_source_files_properties("${_t3k_webauth}" PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
+        find_library(T3K_AUTHENTICATION_SERVICES_FRAMEWORK AuthenticationServices)
+        target_link_libraries(${target} PRIVATE ${T3K_AUTHENTICATION_SERVICES_FRAMEWORK})
+    endif()
 endfunction()

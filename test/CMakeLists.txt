@@ -27,6 +27,7 @@ target_sources(DspTests PRIVATE
     src/factory_preset_tests.cpp
     src/gate_tests.cpp
     src/host_program_tests.cpp
+    src/ir_block_size_tests.cpp
     src/ir_classification_tests.cpp
     src/ir_temp_file_tests.cpp
     src/looper_tests.cpp
@@ -49,6 +50,7 @@ target_sources(DspTests PRIVATE
     # Compiled straight from the plugin tree so the tests exercise the real
     # processor, not a copy. GUI sources are excluded; HEADLESS=1 below
     # compiles the processor exactly like the headless plugin build.
+    ../plugin/src/AppData.cpp
     ../plugin/src/AutoOffset.cpp
     ../plugin/src/BlockEq.cpp
     ../plugin/src/BlockSpectrum.cpp

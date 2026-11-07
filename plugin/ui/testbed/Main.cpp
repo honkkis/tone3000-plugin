@@ -37,7 +37,9 @@ public:
     setUsingWindowsMultiTouch(true);  // touch arrives live, as in the plugin (see NativeEditor.h)
     setContentNonOwned(&host, true);
     setResizable(true, false);
-    getConstrainer()->setFixedAspectRatio(design::kWidth / double(host.getHeight()));
+    // The plugin's own resize policy: the width scales, extra height
+    // stretches the column (see core/WindowFit.h).
+    setConstrainer(&host.constrainer());
     centreWithSize(host.getWidth(), host.getHeight());
     setVisible(true);
   }

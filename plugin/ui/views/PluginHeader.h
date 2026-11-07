@@ -7,6 +7,7 @@
 #include "AccountMenu.h"
 #include "PresetBar.h"
 #include "StereoModeToggle.h"
+#include "core/Design.h"
 #include "services/Services.h"
 #include "widgets/IconButton.h"
 
@@ -14,7 +15,7 @@ namespace t3k::ui {
 
 class PluginHeader : public juce::Component, private ChainStore::Listener, private ToneSession::Listener {
 public:
-  static constexpr int kHeight = 64;
+  static constexpr int kHeight = design::kHeaderHeight;
 
   explicit PluginHeader(Services& services);
   ~PluginHeader() override;

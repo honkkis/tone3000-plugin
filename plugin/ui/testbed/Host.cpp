@@ -63,6 +63,7 @@ juce::File fixturesDir() { return juce::File(T3K_TESTBED_FIXTURES); }
 
 ScaledHost::ScaledHost(Backend& backend, const Scenario& scenario, const juce::var& fixtures)
     : zoom_(scenario.zoom()),
+      stretch_(scenario.stretch()),
       session(scenario.data, fixtures),
       services(backend, session, *this, prefs, /*updateNotice=*/true) {
   seedPrefs(prefs, scenario, fixtures);
@@ -80,28 +81,37 @@ ScaledHost::ScaledHost(Backend& backend, const Scenario& scenario, const juce::v
   root = std::make_unique<PluginRoot>(services);
   addAndMakeVisible(*root);
   setVisible(true);  // offscreen captures have no window to make us visible
-  setSize(juce::roundToInt(design::kWidth * zoom_), juce::roundToInt(root->designHeight() * zoom_));
+  setSize(juce::roundToInt(design::kWidth * zoom_), juce::roundToInt((minDesignHeight() + stretch_) * zoom_));
   resized();  // the root's chrome report already sized us; fit it now that it exists
 }
 
+int ScaledHost::minDesignHeight() const { return design::kHeight + chrome_; }
+
 void ScaledHost::setExtraContentHeight(int total, int) {
+  chrome_ = total;
+  bounds_.setMinDesignHeight(minDesignHeight());
+  // Grow by the strip, keeping scale and stretch (NativeEditor's desktop
+  // path). Before the root exists its constructor is reporting; the
+  // constructor sizes us after.
+  const int stretch = root != nullptr ? root->stretch() : stretch_;
   if (auto* window = findParentComponentOfClass<juce::DocumentWindow>()) {
     const double scale = getWidth() / static_cast<double>(design::kWidth);
     window->setContentComponentSize(juce::roundToInt(design::kWidth * scale),
-                                    juce::roundToInt((design::kHeight + total) * scale));
+                                    juce::roundToInt((minDesignHeight() + stretch) * scale));
   } else {
     setSize(juce::roundToInt(design::kWidth * zoom_),  // offscreen capture: the scenario's zoom, 1:1 by default
-            juce::roundToInt((design::kHeight + total) * zoom_));
+            juce::roundToInt((minDesignHeight() + stretch) * zoom_));
   }
 }
 
 void ScaledHost::resized() {
   if (root == nullptr) return;
-  const double scale = juce::jmax(0.05, juce::jmin(getWidth() / double(design::kWidth),
-                                                   getHeight() / double(root->designHeight())));
-  root->setTransform(juce::AffineTransform::scale(static_cast<float>(scale)));
-  root->setTopLeftPosition(juce::roundToInt((getWidth() - design::kWidth * scale) / 2), 0);
-  services.zoom.set(scale);
+  const auto fit = design::fit(getWidth(), getHeight(), minDesignHeight());
+  root->setStretch(fit.stretch);
+  root->setTransform(juce::AffineTransform::scale(static_cast<float>(fit.scale)));
+  root->setTopLeftPosition(juce::roundToInt((getWidth() - design::kWidth * fit.scale) / 2), 0);
+  services.zoom.set(fit.scale);
+  bounds_.updateLimitsFor(getWidth());
 }
 
 }  // namespace t3k::ui::testbed

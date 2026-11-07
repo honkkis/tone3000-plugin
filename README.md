@@ -25,8 +25,9 @@ install, load tones, and use it.
   undo/redo, and presets. Presets are plain files named after the preset
   (Plugin Settings → Presets opens the folder), so they can be backed up or
   copied between machines.
-- **Cross-platform.** One plugin on macOS, Windows, Linux, and iOS
-  (Standalone). The UI is JUCE/C++ (`plugin/ui/`), drawn natively on every
+- **Cross-platform.** One plugin on macOS, Windows, Linux, and iPad (the
+  Standalone app, with the AUv3 plugin inside it for hosts; see
+  [`docs/ios.md`](docs/ios.md)). The UI is JUCE/C++ (`plugin/ui/`), drawn natively on every
   platform: no browser engine, no web runtime, nothing to install beside the
   plugin (see [`plugin/ui/README.md`](plugin/ui/README.md) and the design
   record in [`plugin/docs/native-ui.md`](plugin/docs/native-ui.md)).
@@ -94,10 +95,11 @@ T3K_PUBLISHABLE_KEY=t3k_pub_your_key_here
 # T3K_API_DOMAIN=https://staging.tone3000.com
 ```
 
-Sign-in opens in the system browser and returns to the plugin through a
-loopback redirect on an ephemeral port (`http://localhost:<port>/`).
-Localhost redirect URIs are auto-allowed for publishable keys, so nothing
-needs registering in TONE3000 > Settings > API Keys.
+Sign-in opens in the system browser (an in-app sheet on iOS) and returns
+to the plugin through a loopback redirect on an ephemeral port
+(`http://localhost:<port>/`). Localhost redirect URIs are auto-allowed for
+publishable keys, so nothing needs registering in TONE3000 > Settings >
+API Keys.
 
 ### 4. Build the plugin
 
@@ -286,7 +288,10 @@ flowchart LR
   NAM models or IRs carry different baked-in latency; the auto-align button
   mutes the output for under half a second, drives both chains with an
   identical internal sweep, and measures the lag and relative polarity from
-  the cross-correlation (`plugin/include/AutoOffset.h`). On a rig that can't
+  the cross-correlation (`plugin/include/AutoOffset.h`; the same probe
+  measured per model, with a dependency-free version for other
+  integrators, is written up in
+  [`plugin/docs/model-latency.md`](plugin/docs/model-latency.md)). On a rig that can't
   reproduce stereo (mono track, one-channel output device) both chains still
   run and are summed to mono at the output (½(L+R), the host's own mono-fold
   law), with balance/solo/Ø live inside the sum, pans inert, and a MONO chip
@@ -430,7 +435,7 @@ Debug`.
 | --------------- | ----------------------------------------------------- |
 | `plugin/`       | C++ plugin: processor, DSP, presets, MIDI mapping; vendors NeuralAmpModelerCore and AudioDSPTools |
 | `plugin/ui/`    | The JUCE UI: views, widgets, services, testbed (see [plugin/ui/README.md](plugin/ui/README.md)) |
-| `plugin/docs/`  | Design docs (UI, spread, oversampling, multi-core, local models) |
+| `plugin/docs/`  | Design docs (UI, spread, oversampling, multi-core, local models, pitch shift, model latency) |
 | `test/`         | GoogleTest DSP suite + test assets                    |
 | `script/`       | Build, packaging, and install helpers                 |
 | `tools/`        | Maintainer utilities, not built by default (`PresetTool` regenerates the shipped presets) |

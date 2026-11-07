@@ -158,7 +158,12 @@ from (`port of KnobControl.tsx`); that is lineage, recorded in
   view that holds its size on screen instead (the tone browser's body, so a
   bigger window shows more results) counter-scales by `Services::zoom`, the
   factor the shell publishes on every fit; a `Popover` adopts its anchor's
-  scale, so menus opened from it are 1x too.
+  scale, so menus opened from it are 1x too. The 578 is a minimum: a taller
+  window stretches the column between header and faceplate
+  (`core/WindowFit.h`, `PluginRoot::setStretch`), and a screen in that
+  column keeps its title under the header and centres the rest in the room,
+  or fills it. Lay out against `getHeight()`, not the constant; a
+  scenario's `stretch` renders the testbed that way (`main-mono-stretched`).
 - **Ownership.** `NativeEditor` → `Services` → `PluginRoot` → views. Views
   hold references to the services they use and register as listeners in
   their constructor, deregister in their destructor. No singletons, no
@@ -205,9 +210,12 @@ from (`port of KnobControl.tsx`); that is lineage, recorded in
 
 ## Sign-in
 
-OAuth (PKCE) runs in the system browser. `Tone3000Session::login` starts
-`LoopbackServer` on `127.0.0.1:<ephemeral>`, opens the authorize URL with
-`redirect_uri=http://localhost:<port>/`, and the plugin shows the
+OAuth (PKCE) runs in the system browser on desktop and in an in-app
+`ASWebAuthenticationSession` sheet on iOS (`services/WebAuth`; App Store
+review rejects a hand-off to Safari, see `docs/ios.md`).
+`Tone3000Session::login` starts `LoopbackServer` on `127.0.0.1:<ephemeral>`,
+opens the authorize URL with `redirect_uri=http://localhost:<port>/`
+(the iOS sheet follows that redirect too), and the plugin shows the
 `SignInScreen` for as long as the session's `AuthFlow` is not idle: a full
 page in the tone browser's slot (Select Tone mockups 13342:46017 and
 13342:46055) with a bare ← that abandons the sign-in, the loading dots over
@@ -245,6 +253,21 @@ in and the others are dropped. The redirect is checked against the PKCE `state` 
 exchanged for tokens (`Tone3000Client`, persisted in `UiPrefs`, refreshed
 transparently with a single in-flight refresh and one 401 retry). Closing
 the editor stops the listener and the polling; a stale callback is ignored.
+
+The iOS AUv3 can do neither browser path (an app extension cannot open
+Safari or present the sheet), but the device flow never leaves the
+process, so `Tone3000Session::Config::signInViaApp` turns `login()` into:
+already signed in through the TONE3000 app, whose preferences file (and so
+whose tokens) the plugin shares through the App Group container? Then the
+gated action goes ahead. Otherwise the flow enters `leaving` with
+`AuthFlow::deviceOnly` set and the device code requested at once, so the
+`SignInScreen` opens on the device page itself (no browser page, no Copy
+Link, a line under the cards that the app's sign-in counts too, and the
+expired-code page offers New code alone), while the session also re-reads
+the shared file every second (`kAppSignInPollMs`); the code's approval or
+the app's sign-in, whichever lands first, finishes like any sign-in. The
+testbed's `MockSession` plays this with `api.authorize: "app"`
+(`load-oauth-app-device*`).
 
 ## The tone browser (Select tone)
 

@@ -87,6 +87,7 @@ ChainView::ChainView(Services& services)
   addChildComponent(rail_);
 
   scroller_->setViewedComponent(column_.get(), false);
+  scroller_->setFocusMargin(gallery::kEdgeFadeWidth);  // a focused tile clears the edge fade
   scroller_->onScroll = [this] { saveScroll(); };
   addAndMakeVisible(*scroller_);
   column_->addAndMakeVisible(left_);
@@ -171,7 +172,9 @@ const ChainItem* ChainView::itemIn(const Lanes& lanes, const std::string& id) co
   return nullptr;
 }
 
-// Layout
+// Layout. The scroller fills the column, so a stretched column (see
+// PluginRoot::setStretch) centres the lanes in the extra room (layoutColumn)
+// while the title keeps its place under the header.
 void ChainView::resized() {
   auto area = getLocalBounds().reduced(kPadX, kPadY);
   if (stereo()) rail_.setBounds(area.removeFromLeft(StereoPanRail::kWidth).withSizeKeepingCentre(
@@ -460,6 +463,9 @@ bool ChainView::tileKey(GalleryTile& tile, const juce::KeyPress& key) {
   } else {
     return false;
   }
+  // The travelling tile stays in view, as it would under a finger.
+  if (const auto now = laneOf(lanes_, activeId_))
+    if (auto* moved = lane(*now).tileFor(activeId_)) scroller_->reveal(*moved, gallery::kEdgeFadeWidth);
   return true;
 }
 

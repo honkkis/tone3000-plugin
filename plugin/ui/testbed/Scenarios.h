@@ -26,6 +26,8 @@ struct Scenario {
   int settleMs() const { return static_cast<int>(data.getProperty("settle", 400)); }
   // Window zoom to lay the root out at (the grid holds 1x under it).
   double zoom() const { return static_cast<double>(data.getProperty("zoom", 1.0)); }
+  // Design px the window is taller than the design box (PluginRoot::setStretch).
+  int stretch() const { return static_cast<int>(data.getProperty("stretch", 0)); }
 };
 
 struct Fixtures {

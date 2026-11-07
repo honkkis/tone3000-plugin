@@ -424,6 +424,12 @@ public:
   // the message thread.
   std::atomic<double> editorScale{1.0};
 
+  // Design px the user's window is taller than the design box at that scale
+  // (the content column stretches by it; see ui/core/WindowFit.h).
+  // Persisted with editorScale so the window reopens at the shape it was
+  // left in. 0 = the design's own aspect.
+  std::atomic<int> editorStretch{0};
+
   // Extra window height (design px) for persistent chrome strips, currently
   // just the hint bar. Persisted like editorScale so the next editor opens at
   // the height the UI's first paint will actually need, instead of growing a
@@ -521,9 +527,9 @@ public:
   static juce::File getLogFile();
 
   // Location of the shared machine-wide settings file (the multi-core
-  // preference). Logged once at startup (see the constructor) so
-  // a "settings don't persist" report can be diagnosed straight from the
-  // log instead of guessed at.
+  // preference), in the app-data root (AppData.h). Logged once at startup
+  // (see the constructor) so a "settings don't persist" report can be
+  // diagnosed straight from the log instead of guessed at.
   static juce::File getSettingsFile();
 
   // PropertiesFile options for the native UI's per-machine preferences
@@ -565,6 +571,12 @@ private:
       block size times the current oversampling factor. */
   int chainDomainBlockSize() const noexcept;
 
+  /** The block size IR convolvers are prepared with right now: the base
+      block capped at kIrConvolverMaxBlockSize (see ChainBlock.h). */
+  int irConvolverBlockSize() const noexcept {
+    return irConvolverBlockSizeFor(chainBaseBlockSize());
+  }
+
   /** The effective chain rate: kChainBaseSampleRate × oversampling factor.
       Safe from any thread (the factor is atomic; it only changes inside the
       full re-prepare paths, never under the audio thread's feet). */
@@ -582,6 +594,13 @@ private:
     // engines carry their phase count and get re-queued by the apply step;
     // IR convolvers are rate-independent and always built at the base rate.)
     int preparedBlockSize = 0;
+
+    // The block size the convolvers were prepared with (irConvolverBlockSize
+    // at prepare time). The apply step re-prepares them when the live value
+    // differs: a restore-time load sees the 4096 default before prepareToPlay
+    // reports the real host block, and would otherwise sit at the cap on a
+    // host that really runs 64.
+    int preparedIrBlockSize = 0;
 
     std::unique_ptr<NamEngine> namEngine;
 

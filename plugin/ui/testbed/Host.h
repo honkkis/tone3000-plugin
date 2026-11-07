@@ -11,6 +11,7 @@
 #include "MockSession.h"
 #include "Scenarios.h"
 #include "core/Fonts.h"
+#include "core/WindowFit.h"
 #include "services/Services.h"
 #include "views/PluginRoot.h"
 #include "widgets/KnobFace.h"
@@ -25,13 +26,22 @@ public:
   ScaledHost(Backend& backend, const Scenario& scenario, const juce::var& fixtures);
 
   PluginRoot& pluginRoot() { return *root; }
+  // The resize policy for a window around us (TestbedWindow), tracking the
+  // chrome as NativeEditor's does.
+  design::FitConstrainer& constrainer() { return bounds_; }
 
   void setExtraContentHeight(int total, int) override;
   void resized() override;
   void paint(juce::Graphics& g) override { g.fillAll(juce::Colours::black); }
 
 private:
+  // The design box at the current chrome: the least the window shows whole.
+  int minDesignHeight() const;
+
   const double zoom_;
+  const int stretch_;  // the scenario's; the window's own once the user drags it
+  int chrome_ = 0;     // the root's strips, reported through setExtraContentHeight
+  design::FitConstrainer bounds_;
   // As in NativeEditor: pin the shared typefaces and knob layers for the
   // host's lifetime so paints reuse them instead of rebuilding per call.
   Fonts::Hold fontsHold_;

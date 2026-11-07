@@ -1,12 +1,20 @@
 // The plugin's editor: owns the backend, the services and the PluginRoot,
-// and manages the window box: the 1024 x
-// 578(+chrome) design box times an aspect-locked user scale between 1x and
-// kMaxScale, persisted on the processor, grown by the chrome strips' height
-// on request.
+// and manages the window box: the 1024 x 578(+chrome) design box times a
+// user scale between 1x and kMaxScale, plus any height the user (or the
+// screen) adds beyond that, both persisted on the processor; grown by the
+// chrome strips' height on request.
 //
-// The root is laid out in design space and scaled with one AffineTransform:
-// top-anchored and horizontally centred in whatever box the host actually
-// gives us, so a refused resize letterboxes instead of squishing.
+// The root is laid out in design space and scaled with one AffineTransform
+// (core/WindowFit.h): the width picks the scale, a taller box stretches the
+// content column, and the root sits top-anchored and horizontally centred in
+// whatever box the host actually gives us, so a refused resize letterboxes
+// instead of squishing.
+//
+// Two window regimes. A hosted editor (every desktop format, the iOS AUv3)
+// is resizable within the design's range and asks the host for its size;
+// the iPad app's window is the screen (kiosk_): one fixed box, no corner
+// drags, no host to ask and no persisted size, the root simply fitted into
+// it.
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -15,6 +23,7 @@
 #include "backend/ProcessorBackend.h"
 #include "core/Design.h"
 #include "core/Fonts.h"
+#include "core/WindowFit.h"
 #include "services/HttpClient.h"
 #include "services/Services.h"
 #include "services/Tone3000Session.h"
@@ -52,11 +61,11 @@ private:
   // resize is pending, before shrinking to fit.
   static constexpr int kShrinkGraceMs = 450;
 
-  int designHeight() const { return design::kHeight + extraContentHeight_; }
+  // The design box at the current chrome: the least the window shows whole.
+  int minDesignHeight() const { return design::kHeight + extraContentHeight_; }
   double currentScale() const { return getWidth() / static_cast<double>(design::kWidth); }
-  double maxStartScale() const;
-  void applyScaledSize(double scale);
-  void updateResizeConstraints();
+  design::Fit startFit() const;
+  void applyScaledSize(double scale, int stretch);
   void fitRoot();
   void timerCallback() override { fitRoot(); }
 
@@ -98,6 +107,8 @@ private:
   bool loggedFirstPaint_ = false;
 
   TONE3000Processor& processor_;
+  // The window is the iPad's screen (the iOS Standalone); see the header.
+  const bool kiosk_;
   // Keep the UI's rasterised resources alive for as long as any editor
   // exists, and no longer: on Windows they are Direct2D/DirectWrite-backed
   // and must be gone before the host unloads the module (see KnobFaceCache
@@ -111,6 +122,10 @@ private:
   // Declared before the root: PluginRoot reports its chrome height from its
   // constructor, which lands in setExtraContentHeight.
   int extraContentHeight_ = 0;
+  // The resize policy (desktop only; installed over JUCE's default
+  // constrainer, which can't express a minimum height that follows the
+  // width). Its limits track the chrome and the current width.
+  design::FitConstrainer bounds_;
   // Guards resized() against persisting a size we didn't choose (see
   // parentHierarchyChanged).
   bool restoringSize_ = false;
