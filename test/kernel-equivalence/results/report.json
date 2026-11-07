@@ -1,0 +1,2874 @@
+{
+  "metadata": {
+    "core_revision": "552c5ab54cb8c2027ba9567c3ae974884e5b68c5",
+    "eigen_revision": "bc3b39870ecb690a623a3f49149a358b95c5781d",
+    "pre_pr_revision": "1f42f88535884450104b8711d7595019afa0495b",
+    "model": "test/files/a2-amp-test.nam",
+    "model_sha256": "0c09c293df07f6e0871b4215f6bfc788f57509bf08b0b5a5ed2bbac04fc70967",
+    "input_sha256": "e86b237f5bae01d0c76dfa4d15362c368e506647e319254f6a087e07ef8a4fce",
+    "example_audio_sha256": "1be6b004d1f0a4da882d4bc216ce7c94cedcf99673059b47a885b432e06c01d6",
+    "sample_rate": 48000,
+    "example_audio_start_sample": 48001,
+    "compiler": "aarch64-linux-gnu-g++ (Debian 14.2.0-19) 14.2.0",
+    "flags": "-O3 -ffp-contract=fast",
+    "runner": "/tmp/kernel-toolchain/usr/bin/qemu-aarch64 -L /tmp/kernel-toolchain/usr/aarch64-linux-gnu",
+    "states": {
+      "0": "cold",
+      "1": "prewarmed",
+      "2": "dirty then reset / cached prewarm"
+    },
+    "stft": "Hann; 75% overlap; no boundary extension or padding; dB mask at -80 dB relative to peak reference bin"
+  },
+  "cases": {
+    "sub0_c3_block0_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block0_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block0_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block128_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block128_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block128_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block32_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block32_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block32_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block512_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block512_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block512_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block64_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2511229082771781,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block64_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub0_c3_block64_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.2522195066141763,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block0_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block0_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block0_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block128_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block128_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block128_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block32_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block32_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block32_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block512_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block512_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block512_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block64_state0": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24834266602268665,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block64_state1": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    },
+    "sub1_c8_block64_state2": {
+      "planar_vs_current_reference": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "planar_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      },
+      "current_reference_vs_pre_pr": {
+        "samples": 48017,
+        "bit_mismatches": 0,
+        "first_mismatch": null,
+        "float32_bit_mismatches": 0,
+        "max_abs": 0.0,
+        "rms_error": 0.0,
+        "error_dbfs": null,
+        "snr_db": null,
+        "reference_rms": 0.24872480373184155,
+        "stft": {
+          "256": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "1024": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          },
+          "4096": {
+            "complex_max_abs": 0.0,
+            "complex_relative_l2": 0.0,
+            "magnitude_max_abs": 0.0,
+            "max_magnitude_db_above_minus80db": 0.0
+          }
+        }
+      }
+    }
+  }
+}
